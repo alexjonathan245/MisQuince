@@ -79,6 +79,13 @@
         }
         .text-animated { animation: gentle-float 4s ease-in-out infinite; }
 
+        /* Animación para el emoji del sobre */
+        @keyframes hand-offer {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-4px) rotate(-5deg); }
+        }
+        .emoji-offer { animation: hand-offer 2s ease-in-out infinite; display: inline-block; font-size: 2.5rem; }
+
         @keyframes fx-flash{0%{opacity:0}10%{opacity:.85}100%{opacity:0}}
         @keyframes fx-ring{0%{transform:translate(-50%,-50%) scale(0);opacity:.9}100%{transform:translate(-50%,-50%) scale(1);opacity:0}}
         @keyframes fx-shake{0%,100%{transform:translateX(0)}10%{transform:translateX(-6px) rotate(-.5deg)}20%{transform:translateX(6px) rotate(.5deg)}30%{transform:translateX(-5px) rotate(-.3deg)}40%{transform:translateX(5px) rotate(.3deg)}50%{transform:translateX(-3px)}60%{transform:translateX(3px)}70%{transform:translateX(-2px)}80%{transform:translateX(2px)}90%{transform:translateX(-1px)}}
@@ -154,18 +161,23 @@
         .video-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,#be185d,#fbbf24,#be185d,transparent);background-size:200% 100%;animation:shimmer 4s linear infinite;z-index:5;}
         .video-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,#fbbf24,#be185d,#fbbf24,transparent);background-size:200% 100%;animation:shimmer 4s linear infinite;z-index:5;}
         
-        /* TRUCO PARA OCULTAR TEXTO Y BOTONES DE YOUTUBE */
+        /* CONTENEDOR DEL VIDEO 9:16 CORREGIDO */
         .video-916{position:relative;width:100%;aspect-ratio:9/16;max-height:55vh;margin:0 auto;border-radius:22px;overflow:hidden;background:#000;}
-        .video-916 .video-wrapper {
+        .video-wrapper {
+            position: absolute;
+            top: -60px;      /* Recorta la parte superior (título del video) */
+            left: -10px;     /* Recorta la izquierda */
+            right: -10px;    /* Recorta la derecha */
+            bottom: -120px;  /* Recorta la parte inferior (botones) */
+            pointer-events: none;
+            z-index: 2;
+        }
+        .video-wrapper iframe {
             position: absolute;
             top: 0; left: 0;
             width: 100%; height: 100%;
-            /* Hacemos el contenedor un 70% más grande */
-            transform: scale(1.7); 
-            pointer-events: none; /* Evita que le den click a pausar */
-            z-index: 2;
+            border: 0;
         }
-        .video-916 iframe{position:absolute;top:0;left:0;width:100%;height:100%;border:none;overflow:hidden;}
         .video-placeholder-916{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;background:linear-gradient(160deg,#1a1a2e 0%,#16213e 40%,#0f3460 100%);}
         .video-placeholder-916 .vp-icon{width:60px;height:60px;border-radius:50%;border:2px solid rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:1.6rem;animation:pulse-pink 2.5s ease-out infinite;}
 
@@ -261,7 +273,7 @@
                 <!-- INICIO -->
                 <div id="p-home" class="tp fade-up">
                     
-                    <!-- SECCIÓN DE BIENVENIDA MOVIDA ARRIBA -->
+                    <!-- SECCIÓN DE BIENVENIDA ARRIBA -->
                     <div id="guest-greeting-box" class="invite-box p-5 mb-4 text-center hidden">
                         <div class="flex items-center justify-center gap-3 mb-2">
                             <div class="h-px w-10 bg-gradient-to-r from-transparent to-amber-400/60"></div>
@@ -302,7 +314,7 @@
                         </div>
                     </div>
 
-                    <!-- ===== VIDEO YOUTUBE LIMPIO ===== -->
+                    <!-- ===== VIDEO YOUTUBE LIMPIO 9:16 ===== -->
                     <div class="video-card mb-3" id="video-card-home">
                         <div class="video-916" id="video-916-wrap">
                             <div class="video-wrapper" id="home-video-container"></div>
@@ -347,12 +359,15 @@
                         </div>
                     </div>
 
-                    <!-- SOBRE CERRADO -->
+                    <!-- SECCIÓN OBSEQUIO MODIFICADA -->
                     <div class="sobre-box p-4 mb-3">
                         <div class="flex items-start gap-3">
-                            <div class="flex-shrink-0"><svg width="60" height="50" viewBox="0 0 60 50" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="12" width="56" height="36" rx="3" fill="#fef3c7" stroke="#f59e0b" stroke-width="1.5"/><path d="M2,12 L30,32 L58,12" fill="none" stroke="#f59e0b" stroke-width="1.5"/><path d="M2,12 L30,32 L58,12 L58,8 Q58,4 54,4 L6,4 Q2,4 2,8 Z" fill="#fbbf24" opacity="0.8" stroke="#f59e0b" stroke-width="1"/><circle cx="30" cy="20" r="6" fill="#dc2626" opacity="0.85" class="seal-pulse"/><text x="30" y="23" font-size="7" fill="white" text-anchor="middle" font-weight="bold">$</text></svg></div>
+                            <div class="flex-shrink-0 text-3xl emoji-offer">🫴</div>
                             <div class="flex-1">
-                                <div class="flex items-center gap-2 mb-1"><span class="text-xl">🎁</span><p class="font-display font-bold text-base tx-dark">Sobre Cerrado</p></div>
+                                <div class="flex items-center gap-2 mb-1">
+                                    <span class="text-xl">🎁</span>
+                                    <p class="font-display font-bold text-base tx-dark">Obsequio: Sobre Cerrado</p>
+                                </div>
                                 <p class="font-elegant text-base tx-sub leading-relaxed">La tradicion del <span class="text-amber-700 font-bold">sobre cerrado</span> es el regalo ideal. Un sobre sellado con tu aportacion sera bien recibido por la quinceanera.</p>
                             </div>
                         </div>
