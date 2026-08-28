@@ -140,11 +140,6 @@
         .notice-box::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#be185d,#ec4899,#be185d);background-size:200% 100%;animation:shimmer 3s linear infinite}
         .sobre-box{background:rgba(255,255,255,.80);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border:1.5px solid rgba(0,0,0,.1);border-radius:16px;position:relative;overflow:hidden}
         .sobre-box::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,#fbbf24,#dc2626,#fbbf24);background-size:200% 100%;animation:shimmer 3s linear infinite}
-        .photo-slot{position:relative;overflow:hidden;border-radius:14px;border:2px dashed rgba(0,0,0,.15);transition:all .3s;cursor:pointer;aspect-ratio:1}
-        .photo-slot:hover{border-color:rgba(0,0,0,.3);background:rgba(0,0,0,.02)}
-        .photo-slot img{width:100%;height:100%;object-fit:cover}
-        .photo-slot .del-btn{position:absolute;top:4px;right:4px;width:22px;height:22px;border-radius:50%;background:rgba(220,38,38,.85);color:white;display:flex;align-items:center;justify-content:center;font-size:12px;opacity:0;transition:opacity .2s;cursor:pointer;border:none}
-        .photo-slot:hover .del-btn{opacity:1}
         .has-photo .glass-card{background:rgba(255,255,255,.6);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-color:rgba(0,0,0,.1)}
         .tx-dark{color:#111}.tx-sub{color:#333}.tx-muted{color:#666}
 
@@ -152,7 +147,6 @@
         .video-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,#be185d,#fbbf24,#be185d,transparent);background-size:200% 100%;animation:shimmer 4s linear infinite;z-index:5;}
         .video-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,#fbbf24,#be185d,#fbbf24,transparent);background-size:200% 100%;animation:shimmer 4s linear infinite;z-index:5;}
         .video-916{position:relative;width:100%;aspect-ratio:9/16;max-height:55vh;margin:0 auto;border-radius:22px;overflow:hidden;background:#000;}
-        .video-916 video{width:100%;height:100%;object-fit:cover;}
         .video-916 iframe{width:100%;height:100%;object-fit:cover;border:none;}
         .video-placeholder-916{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;background:linear-gradient(160deg,#1a1a2e 0%,#16213e 40%,#0f3460 100%);}
         .video-placeholder-916 .vp-icon{width:60px;height:60px;border-radius:50%;border:2px solid rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:1.6rem;animation:pulse-pink 2.5s ease-out infinite;}
@@ -254,8 +248,6 @@
                         <div class="glass-card bg-white/70 backdrop-blur-sm rounded-2xl p-3 border border-black/8 text-center shadow-sm"><p class="text-lg">😢</p><p id="c-no" class="font-display text-2xl font-bold text-red-600">0</p><p class="text-xs text-red-500 uppercase tracking-wider font-display font-semibold">No asisten</p></div>
                     </div>
 
-                    <div id="home-gallery" class="hidden mb-3"><div id="gallery-grid" class="grid grid-cols-2 gap-2"></div></div>
-
                     <!-- TITULO -->
                     <div class="invite-box p-5 mb-3 soft-glow">
                         <div class="text-center">
@@ -275,12 +267,12 @@
                         </div>
                     </div>
 
-                    <!-- ===== VIDEO ===== -->
+                    <!-- ===== VIDEO YOUTUBE ===== -->
                     <div class="video-card mb-3" id="video-card-home">
                         <div class="video-916" id="video-916-wrap">
-                            <!-- Aquí se inyecta el video o iframe -->
+                            <!-- Aquí se inyecta el iframe de YouTube -->
                             <div id="home-video-container"></div>
-                            <div class="video-placeholder-916" id="video-placeholder">
+                            <div class="video-placeholder-916" id="video-placeholder" style="display: none;">
                                 <div class="vp-icon">🎬</div>
                                 <p class="font-script text-2xl text-white/70">Pronto disponible</p>
                                 <p class="font-elegant text-sm text-white/30">El video se subira proximamente</p>
@@ -426,20 +418,6 @@
                                 <div id="links-list" class="space-y-1 max-h-32 overflow-y-auto scroll-area"></div>
                             </div>
                         </div>
-
-                        <!-- ENLACES DE FOTO Y VIDEO (SIN SUBIR ARCHIVOS) -->
-                        <div class="bg-white/75 rounded-2xl p-4 border border-black/10 mb-3">
-                            <div class="flex items-center gap-2 mb-3"><span>📷</span><p class="font-display font-bold text-base tx-dark">Enlace de Foto de Fondo</p></div>
-                            <input type="text" id="main-photo-url-input" placeholder="Pega aquí el link de la foto (https://...)" class="inp w-full px-3 py-2.5 text-base mb-2">
-                            <button onclick="saveMainPhotoUrl()" class="btn-g w-full py-2.5 text-white font-display font-bold text-sm rounded-xl">Guardar Foto de Fondo</button>
-                        </div>
-                        
-                        <div class="bg-white/75 rounded-2xl p-4 border border-black/10 mb-3">
-                            <div class="flex items-center gap-2 mb-3"><span>🎬</span><p class="font-display font-bold text-base tx-dark">Enlace de Video (YouTube o MP4)</p></div>
-                            <input type="text" id="video-url-input" placeholder="Pega aquí el link de YouTube o .mp4" class="inp w-full px-3 py-2.5 text-base mb-2">
-                            <button onclick="saveVideoUrl()" class="btn-g w-full py-2.5 text-white font-display font-bold text-sm rounded-xl">Guardar Video</button>
-                            <p class="text-xs tx-muted mt-2">Si es YouTube, usa el link normal (ej: https://youtu.be/...)</p>
-                        </div>
                         
                         <div class="grid grid-cols-3 gap-2 mb-3">
                             <div class="bg-green-50 rounded-xl p-3 text-center border border-green-200/50"><p id="a-yes" class="font-display text-xl font-bold text-green-700">0</p><p class="text-xs text-green-600 uppercase tracking-wider font-display font-semibold">Van</p></div>
@@ -484,6 +462,11 @@
         const API_KEY = "$2a$10$BAhARkBhTbB6InHiDUxsIOgRZhSFTDZzDELpV8NZKt0tBqliPX/FK";
         // =============================================
 
+        // ===== ENLACES FIJOS DE FOTO Y VIDEO =====
+        const PHOTO_URL = "https://1drv.ms/i/c/6cc2f784eb96b5ce/IQBVp7bbpM80TYC8XJBZvo0TAVCrRlsSbSIH5Ux6lWMPdpU?e=F09Yce";
+        const VIDEO_URL = "https://youtube.com/shorts/m6Z5Fx465Vw?si=HmY7u0ntP3Xp_qHy";
+        // ========================================
+
         const AU='admin', AP='admin'; 
         let auth=false, curF='yes', pending=null, fxLock=false;
 
@@ -506,26 +489,6 @@
             } catch (e) {}
         }
 
-        // ===== FUNCIONES NUBE (ENLACES DE FOTO Y VIDEO) =====
-        async function fetchMedia() {
-            try {
-                const res = await fetch(`${MEDIA_BIN_URL}/latest`, { headers: { 'X-Master-Key': API_KEY } });
-                const data = await res.json();
-                return data.record || { fotos: { main: "", galeria: [] }, video: "" };
-            } catch (e) { return { fotos: { main: "", galeria: [] }, video: "" }; }
-        }
-
-        async function saveMedia(mediaData) {
-            try {
-                const res = await fetch(MEDIA_BIN_URL, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json', 'X-Master-Key': API_KEY },
-                    body: JSON.stringify(mediaData)
-                });
-                return res.ok;
-            } catch (e) { return false; }
-        }
-
         async function upAll() {
             const d = await fetchGuests(); 
             const y = d.filter(g => g.att === 'yes');
@@ -545,78 +508,45 @@
         }
 
         // ===== APLICAR FOTO Y VIDEO (LEYENDO ENLACES) =====
-        async function applyPhotoBg() {
-            const media = await fetchMedia();
-            const s = media.fotos.main;
+        function applyPhotoBg() {
+            const s = PHOTO_URL;
             const b = document.getElementById('full-photo-bg');
             const i = document.getElementById('full-photo-img');
             const m = document.getElementById('main-screen');
-            if(s) { i.src = s; b.classList.add('active'); m.classList.add('has-photo'); }
+            if(s) { 
+                // Truco para que OneDrive permita mostrar la imagen en la página
+                let finalUrl = s;
+                if(s.includes("1drv.ms")) {
+                    const resId = s.split("/")[s.split("/").length - 1].split("?")[0];
+                    finalUrl = `https://api.onedrive.com/v1.0/shares/u!aHR0cHM6Ly8xZHJ2Lm1zL2kvYy82Y2MyZjc4NGViOTZiNWNlL0lRQlZwN2JicE04MFRZQzhYSkJadm8wVEFWQ3JSbHNTYlNJSDVVeDZsV01QZHBV/content`;
+                }
+                i.src = finalUrl; 
+                b.classList.add('active'); 
+                m.classList.add('has-photo'); 
+            }
             else { b.classList.remove('active'); m.classList.remove('has-photo'); }
         }
 
-        // Función para convertir enlace de YouTube normal a embed
-        function getYouTubeEmbedUrl(url) {
-            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-            const match = url.match(regExp);
-            if (match && match[2].length == 11) {
-                return `https://www.youtube.com/embed/${match[2]}?autoplay=1&loop=1&playlist=${match[2]}&mute=1`;
-            }
-            return null;
-        }
-
-        async function renderHomeVideo() {
-            const media = await fetchMedia();
-            const url = media.video || "";
+        function renderHomeVideo() {
+            const url = VIDEO_URL;
             const container = document.getElementById('home-video-container');
             const ph = document.getElementById('video-placeholder');
             
-            container.innerHTML = ''; // Limpiar
+            container.innerHTML = ''; 
             
             if(url) {
-                const ytUrl = getYouTubeEmbedUrl(url);
-                if(ytUrl) {
-                    // Es YouTube
-                    container.innerHTML = `<iframe src="${ytUrl}" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
-                } else if(url.endsWith('.mp4') || url.endsWith('.webm')) {
-                    // Es un archivo MP4 directo
-                    container.innerHTML = `<video src="${url}" autoplay loop muted playsinline></video>`;
+                const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|shorts\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+                const match = url.match(regExp);
+                if (match && match[2].length == 11) {
+                    const videoId = match[2];
+                    container.innerHTML = `<iframe src="https://www.youtube.com/embed/${videoId}?autoplay=1&loop=1&playlist=${videoId}&mute=1&controls=0" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
                 } else {
-                    // Intentar cargar como iframe genérico
                     container.innerHTML = `<iframe src="${url}" frameborder="0" allowfullscreen></iframe>`;
                 }
                 ph.style.display = 'none';
             } else {
                 ph.style.display = 'flex';
             }
-        }
-
-        async function saveMainPhotoUrl() {
-            const url = document.getElementById('main-photo-url-input').value.trim();
-            if(!url) { toast('⚠️', 'Falta enlace', 'Pega un link'); return; }
-            let media = await fetchMedia();
-            if(!media.fotos) media.fotos = { main: "", galeria: [] };
-            media.fotos.main = url;
-            const ok = await saveMedia(media);
-            if(ok) { applyPhotoBg(); toast('📸', 'Foto guardada', 'Visible para todos'); }
-            else { toast('❌', 'Error', 'No se pudo guardar'); }
-        }
-
-        async function saveVideoUrl() {
-            const url = document.getElementById('video-url-input').value.trim();
-            if(!url) { toast('⚠️', 'Falta enlace', 'Pega un link'); return; }
-            let media = await fetchMedia();
-            media.video = url;
-            const ok = await saveMedia(media);
-            if(ok) { renderHomeVideo(); toast('🎬', 'Video guardado', 'Visible para todos'); }
-            else { toast('❌', 'Error', 'No se pudo guardar'); }
-        }
-
-        // Cargar enlaces actuales en los inputs del admin
-        async function loadMediaInputs() {
-            const media = await fetchMedia();
-            document.getElementById('main-photo-url-input').value = media.fotos?.main || "";
-            document.getElementById('video-url-input').value = media.video || "";
         }
 
         function openFloatModal(t){const b=document.getElementById('float-modal-body'),m=document.getElementById('float-modal');
@@ -631,7 +561,7 @@
         function openEnv(){document.getElementById('env-seal').classList.add('go');setTimeout(()=>document.getElementById('env-flap').classList.add('go'),300);setTimeout(()=>{document.getElementById('env-scene').classList.add('bye');setTimeout(()=>{document.getElementById('env-screen').style.display='none';document.getElementById('main-screen').classList.add('show');applyPhotoBg();renderHomeVideo();burstConfetti()},400)},700)}
         function burstConfetti(){const cl=['#ec4899','#f472b6','#fbbf24','#f59e0b','#a855f7','#06b6d4','#f43f5e','#10b981'];for(let i=0;i<40;i++){const c=document.createElement('div');c.className='confetti';const s=4+Math.random()*6;c.style.cssText=`width:${s}px;height:${s*1.4}px;left:${Math.random()*100}%;background:${cl[i%cl.length]};border-radius:${Math.random()>.5?'50%':'2px'};animation:confetti-fall ${2+Math.random()*3}s linear forwards;animation-delay:${Math.random()*.8}s`;document.body.appendChild(c);setTimeout(()=>c.remove(),5000)}}
 
-        function swTab(t){document.querySelectorAll('.tp').forEach(p=>p.classList.add('hidden'));document.querySelectorAll('.tab-b').forEach(b=>b.classList.remove('active'));const p=document.getElementById('p-'+t),b=document.getElementById('t-'+t);if(p){p.classList.remove('hidden');const inner=p.querySelector('div');if(inner){inner.classList.remove('fade-up');void p.offsetWidth;inner.classList.add('fade-up')}}if(b)b.classList.add('active');if(t==='home')setTimeout(renderHomeVideo,100); if(t==='admin' && auth) loadMediaInputs();}
+        function swTab(t){document.querySelectorAll('.tp').forEach(p=>p.classList.add('hidden'));document.querySelectorAll('.tab-b').forEach(b=>b.classList.remove('active'));const p=document.getElementById('p-'+t),b=document.getElementById('t-'+t);if(p){p.classList.remove('hidden');const inner=p.querySelector('div');if(inner){inner.classList.remove('fade-up');void p.offsetWidth;inner.classList.add('fade-up')}}if(b)b.classList.add('active');if(t==='home')setTimeout(renderHomeVideo,100);}
         
         function togComp(){document.getElementById('comp-sec').classList.toggle('hidden',!document.getElementById('att-y').checked)}
         function addComp(){const l=document.getElementById('comp-list');if(l.children.length>=8){toast('⚠️','Limite','Maximo 8');return}const d=document.createElement('div');d.className='flex gap-2 items-center fade-up';d.innerHTML=`<input type="text" placeholder="Nombre del acompanante" class="inp flex-1 px-3 py-2.5 text-base"><button type="button" onclick="this.parentElement.remove()" class="text-red-500 hover:text-red-700 text-lg transition-colors flex-shrink-0 w-9 h-9 flex items-center justify-center">✕</button>`;l.appendChild(d)}
@@ -646,7 +576,7 @@
             document.getElementById('rsvp-form').reset();document.getElementById('comp-sec').classList.add('hidden');document.getElementById('comp-list').innerHTML='';return false
         }
         
-        function doLogin(e){e.preventDefault();const u=document.getElementById('l-user').value.trim(),p=document.getElementById('l-pass').value;if(u===AU&&p===AP){auth=true;document.getElementById('adm-out').classList.add('hidden');document.getElementById('adm-in').classList.remove('hidden');upAll();loadMediaInputs();renderLinksList();toast('🔑','Bienvenido','')}else{toast('❌','Incorrecto','')}return false}
+        function doLogin(e){e.preventDefault();const u=document.getElementById('l-user').value.trim(),p=document.getElementById('l-pass').value;if(u===AU&&p===AP){auth=true;document.getElementById('adm-out').classList.add('hidden');document.getElementById('adm-in').classList.remove('hidden');upAll();renderLinksList();toast('🔑','Bienvenido','')}else{toast('❌','Incorrecto','')}return false}
         function doOut(){auth=false;document.getElementById('adm-in').classList.add('hidden');document.getElementById('adm-out').classList.remove('hidden');document.getElementById('l-user').value='';document.getElementById('l-pass').value='';toast('👋','Sesion cerrada','')}
         function setF(f){curF=f;['yes','no','all'].forEach(k=>{const b=document.getElementById('f-'+k);if(k===f){if(k==='yes')b.className='text-sm px-3 py-1.5 rounded-full bg-green-100 text-green-800 border border-green-200 font-display font-semibold transition-all';else if(k==='no')b.className='text-sm px-3 py-1.5 rounded-full bg-red-100 text-red-700 border border-red-200 font-display font-semibold transition-all';else b.className='text-sm px-3 py-1.5 rounded-full bg-pink-100 tx-dark border border-pink-200 font-display font-semibold transition-all'}else{b.className='text-sm px-3 py-1.5 rounded-full bg-white/60 tx-muted border border-black/10 font-display font-semibold transition-all'}});upAll()}
         
