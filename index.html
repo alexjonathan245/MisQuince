@@ -147,7 +147,7 @@
         .video-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,#be185d,#fbbf24,#be185d,transparent);background-size:200% 100%;animation:shimmer 4s linear infinite;z-index:5;}
         .video-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,#fbbf24,#be185d,#fbbf24,transparent);background-size:200% 100%;animation:shimmer 4s linear infinite;z-index:5;}
         .video-916{position:relative;width:100%;aspect-ratio:9/16;max-height:55vh;margin:0 auto;border-radius:22px;overflow:hidden;background:#000;}
-        .video-916 iframe{width:100%;height:100%;object-fit:cover;border:none;}
+        .video-916 iframe{position:absolute;top:0;left:0;width:100%;height:100%;border:none;overflow:hidden;}
         .video-placeholder-916{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;background:linear-gradient(160deg,#1a1a2e 0%,#16213e 40%,#0f3460 100%);}
         .video-placeholder-916 .vp-icon{width:60px;height:60px;border-radius:50%;border:2px solid rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:1.6rem;animation:pulse-pink 2.5s ease-out infinite;}
 
@@ -267,10 +267,9 @@
                         </div>
                     </div>
 
-                    <!-- ===== VIDEO YOUTUBE ===== -->
+                    <!-- ===== VIDEO YOUTUBE 9:16 ===== -->
                     <div class="video-card mb-3" id="video-card-home">
                         <div class="video-916" id="video-916-wrap">
-                            <!-- Aquí se inyecta el iframe de YouTube -->
                             <div id="home-video-container"></div>
                             <div class="video-placeholder-916" id="video-placeholder" style="display: none;">
                                 <div class="vp-icon">🎬</div>
@@ -458,7 +457,6 @@
     <script>
         // ===== TUS DATOS DE JSONBIN CONFIGURADOS =====
         const BIN_URL = "https://api.jsonbin.io/v3/b/6a91d516f5f4af5e294ef1c2"; 
-        const MEDIA_BIN_URL = "https://api.jsonbin.io/v3/b/6a91d9c8f5f4af5e294efed0"; 
         const API_KEY = "$2a$10$BAhARkBhTbB6InHiDUxsIOgRZhSFTDZzDELpV8NZKt0tBqliPX/FK";
         // =============================================
 
@@ -514,7 +512,6 @@
             const i = document.getElementById('full-photo-img');
             const m = document.getElementById('main-screen');
             if(s) { 
-                // Truco para que OneDrive permita mostrar la imagen en la página
                 let finalUrl = s;
                 if(s.includes("1drv.ms")) {
                     const resId = s.split("/")[s.split("/").length - 1].split("?")[0];
@@ -539,7 +536,8 @@
                 const match = url.match(regExp);
                 if (match && match[2].length == 11) {
                     const videoId = match[2];
-                    container.innerHTML = `<iframe src="https://www.youtube.com/embed/${videoId}?autoplay=1&loop=1&playlist=${videoId}&mute=1&controls=0" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
+                    // Parámetros forzados: autoplay=1, mute=1, loop=1, controls=0, playlist=ID (para loop en shorts)
+                    container.innerHTML = `<iframe src="https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}&controls=0&showinfo=0&modestbranding=1&rel=0&playsinline=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
                 } else {
                     container.innerHTML = `<iframe src="${url}" frameborder="0" allowfullscreen></iframe>`;
                 }
