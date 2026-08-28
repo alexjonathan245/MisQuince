@@ -7,7 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,500&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
     <script>
-        tailwind.config={theme:{extend:{fontFamily:{script:['Great Vibes','cursive'],display:['Playfair Display','serif'],elegant:['Cormorant Garamond',serif']}}}}
+        tailwind.config={theme:{extend:{fontFamily:{script:['Great Vibes','cursive'],display:['Playfair Display','serif'],elegant:['Cormorant Garamond',serif]}}}}
     </script>
     <style>
         *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -439,7 +439,7 @@
                         <div class="bg-white/75 rounded-2xl p-4 border border-black/10 mb-3">
                             <div class="flex items-center gap-2 mb-3"><span>👑</span><p class="font-display font-bold text-base tx-dark">Foto de Fondo (Tiempo Real)</p></div>
                             <div class="main-photo-admin" id="main-photo-slot" onclick="document.getElementById('main-photo-input').click()">
-                                <div id="main-photo-placeholder" style="display:flex;align-items:center;justify-content:center;width:100%;height:100%;background:linear-gradient(135deg,#fce7f3,#fdf2f8);flex-direction:column;gap:8px"><span style="font-size:3rem;opacity:.3">📷</span><p style="color:#666;font-family:'Cormorant Garamond',serif;font-size:15px">Toca para subir la foto de fondo</p></div>
+                                <div id="main-photo-placeholder" style="display:flex;align-items:center;justify-content:center;width:100%;height:100%;background:linear-gradient(135deg,#fce7f3,#fdf2f8);flex-direction:column;gap:8px"><span style="font-size:3rem;opacity:.3">📷</span><p style="color:#666;font-family:'Cormorant Garamond',serif;font-size:15px">Toca para subir la foto de fondo</p><p style="color:#999;font-family:'Cormorant Garamond',serif;font-size:12px">Se comprime automáticamente</p></div>
                                 <img id="main-photo-img" class="hidden" alt="Foto quinceanera">
                                 <div class="overlay-hint" id="main-photo-hint" style="display:none"><span>Cambiar foto</span></div>
                                 <button class="del-main" id="main-photo-del" style="display:none" onclick="event.stopPropagation();deleteMainPhoto()">✕</button>
@@ -450,12 +450,12 @@
                         <div class="bg-white/75 rounded-2xl p-4 border border-black/10 mb-3">
                             <div class="flex items-center justify-between mb-3"><div class="flex items-center gap-2"><span>🎬</span><p class="font-display font-bold text-base tx-dark">Video (Tiempo Real)</p></div><button onclick="deleteVideo()" id="del-video-btn" class="text-sm px-2.5 py-1 rounded-full bg-red-50 text-red-600 border border-red-200 font-display font-semibold transition-all hover:bg-red-100" style="display:none">Eliminar video</button></div>
                             <div class="video-admin-slot" id="video-admin-slot" onclick="document.getElementById('video-input').click()">
-                                <div id="video-admin-placeholder" style="display:flex;align-items:center;justify-content:center;width:100%;height:100%;flex-direction:column;gap:8px"><span style="font-size:3rem;opacity:.3">🎥</span><p style="color:#666;font-family:'Cormorant Garamond',serif;font-size:15px">Toca para subir un video</p><p style="color:#999;font-family:'Cormorant Garamond',serif;font-size:12px">MP4, WebM o MOV · 9:16 recomendado</p></div>
+                                <div id="video-admin-placeholder" style="display:flex;align-items:center;justify-content:center;width:100%;height:100%;flex-direction:column;gap:8px"><span style="font-size:3rem;opacity:.3">🎥</span><p style="color:#666;font-family:'Cormorant Garamond',serif;font-size:15px">Toca para subir un video</p><p style="color:#999;font-family:'Cormorant Garamond',serif;font-size:12px">Formato vertical (9:16) - Max 2MB</p></div>
                                 <video id="video-admin-preview" class="hidden" muted loop playsinline></video>
                                 <div class="overlay-hint" id="video-admin-hint" style="display:none"><span>Cambiar video</span></div>
                             </div>
                             <input type="file" accept="video/*" class="hidden" id="video-input" onchange="handleVideoUpload(event)">
-                            <p class="text-sm tx-muted font-elegant mt-2">El video se reproduce en loop automatico. Formato vertical 9:16 recomendado.</p>
+                            <p class="text-sm tx-muted font-elegant mt-2">Si el video es muy pesado, la nube gratuita lo rechazará. Usa videos cortos.</p>
                         </div>
                         
                         <div class="grid grid-cols-3 gap-2 mb-3">
@@ -537,11 +537,12 @@
 
         async function saveMedia(mediaData) {
             try {
-                await fetch(MEDIA_BIN_URL, {
+                const res = await fetch(MEDIA_BIN_URL, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json', 'X-Master-Key': API_KEY },
                     body: JSON.stringify(mediaData)
                 });
+                if (!res.ok) return false;
                 return true;
             } catch (e) { return false; }
         }
@@ -564,7 +565,7 @@
             if (auth) renderGuests(d); 
         }
 
-        // ===== MANEJO DE FOTOS Y VIDEO EN NUBE (CON COMPRESIÓN) =====
+        // ===== MANEJO DE FOTOS Y VIDEO EN NUBE (CON COMPRESIÓN EXTREMA) =====
         async function applyPhotoBg() {
             const media = await fetchMedia();
             const s = media.fotos.main;
@@ -586,7 +587,7 @@
             else { i.classList.add('hidden'); i.src=''; p.style.display='flex'; h.style.display='none'; d.style.display='none'; }
         }
 
-        // Nueva función para comprimir imágenes antes de subirlas
+        // Función de compresión agresiva para asegurar que suba
         function compressImage(file, maxWidth, quality) {
             return new Promise((resolve, reject) => {
                 const reader = new FileReader();
@@ -616,21 +617,22 @@
 
         async function handleMainPhotoUpload(e) {
             const f = e.target.files[0]; if(!f) return;
-            toast('⏳','Comprimiendo...','Espera un momento');
+            toast('⏳','Procesando foto...','Comprimiendo para subirla');
             try {
-                // Comprimimos a máximo 1200px de ancho y calidad 0.8
-                const compressedDataUrl = await compressImage(f, 1200, 0.8);
+                // Comprimimos a 1000px de ancho y calidad 0.7 (muy ligero)
+                const compressedDataUrl = await compressImage(f, 1000, 0.7);
                 
                 let media = await fetchMedia();
                 if(!media.fotos) media.fotos = { main: "", galeria: [] };
                 media.fotos.main = compressedDataUrl;
                 
+                toast('⏳','Subiendo a la nube...','Un momento por favor');
                 const success = await saveMedia(media);
                 if(success) {
                     applyPhotoBg(); renderMainPhoto();
                     toast('📸','Foto actualizada','Visible para todos');
                 } else {
-                    toast('❌','Error al subir','Intenta con otra foto');
+                    toast('❌','Error de tamaño','La nube rechazó el archivo');
                 }
             } catch(err) {
                 toast('❌','Error','No se pudo procesar la foto');
@@ -678,11 +680,13 @@
 
         async function handleVideoUpload(e) {
             const f = e.target.files[0]; if(!f) return;
+            // Limitamos a 2MB estricto para videos en nube gratuita
             if(f.size > 2*1024*1024) { 
-                toast('❌','Video muy grande','Max 2MB para nube gratuita'); 
+                toast('❌','Video muy grande','Max 2MB. Recorta el video.'); 
                 e.target.value=''; 
                 return; 
             }
+            toast('⏳','Subiendo video...','Esto puede tardar unos segundos');
             const r = new FileReader();
             r.onload = async function(ev) {
                 let media = await fetchMedia();
@@ -692,7 +696,7 @@
                     renderVideoAdmin(); renderHomeVideo();
                     toast('🎬','Video subido','Visible para todos');
                 } else {
-                    toast('❌','Error al subir','Intenta con otro video');
+                    toast('❌','Error al subir','Intenta con un video más corto');
                 }
             };
             r.readAsDataURL(f); e.target.value='';
@@ -732,10 +736,10 @@
 
         async function handlePhotoUpload(e) {
             const f = e.target.files[0]; if(!f) return;
-            toast('⏳','Comprimiendo...','Espera un momento');
+            toast('⏳','Procesando foto...','Comprimiendo');
             try {
-                // Comprimimos a máximo 600px de ancho y calidad 0.7
-                const compressedDataUrl = await compressImage(f, 600, 0.7);
+                // Comprimimos a 500px y calidad 0.6 ( súper ligero para galería )
+                const compressedDataUrl = await compressImage(f, 500, 0.6);
                 
                 let media = await fetchMedia();
                 if(!media.fotos) media.fotos = { main: "", galeria: [] };
