@@ -289,10 +289,26 @@
                         </div>
                     </div>
 
+                    <!-- CONTADORES CLICKABLES -->
                     <div class="grid grid-cols-3 gap-2 mb-3">
-                        <div class="glass-card bg-white/70 backdrop-blur-sm rounded-2xl p-3 border border-black/8 text-center shadow-sm"><p class="text-lg">✅</p><p id="c-yes" class="font-display text-2xl font-bold tx-dark">0</p><p class="text-xs tx-muted uppercase tracking-wider font-display font-semibold">Confirmados</p></div>
-                        <div class="glass-card bg-white/70 backdrop-blur-sm rounded-2xl p-3 border border-black/8 text-center shadow-sm"><p class="text-lg">📊</p><p id="c-total" class="font-display text-2xl font-bold tx-dark">0</p><p class="text-xs tx-muted uppercase tracking-wider font-display font-semibold">Respuestas</p></div>
-                        <div class="glass-card bg-white/70 backdrop-blur-sm rounded-2xl p-3 border border-black/8 text-center shadow-sm"><p class="text-lg">😢</p><p id="c-no" class="font-display text-2xl font-bold text-red-600">0</p><p class="text-xs text-red-500 uppercase tracking-wider font-display font-semibold">No asisten</p></div>
+                        <div onclick="openGuestsListModal('yes')" class="click-zone glass-card bg-white/70 backdrop-blur-sm rounded-2xl p-3 border border-black/8 text-center shadow-sm group hover:shadow-md hover:-translate-y-0.5 transition-all">
+                            <div class="text-2xl mb-1 group-hover:scale-110 transition-transform">✅</div>
+                            <p class="font-display text-xs tx-muted font-semibold uppercase tracking-wider">Confirmados</p>
+                            <p id="c-yes" class="font-display text-2xl font-bold tx-dark mt-0.5">0</p>
+                            <p class="text-xs text-pink-600 font-semibold mt-1 click-hint">Ver lista</p>
+                        </div>
+                        <div onclick="openGuestsListModal('all')" class="click-zone glass-card bg-white/70 backdrop-blur-sm rounded-2xl p-3 border border-black/8 text-center shadow-sm group hover:shadow-md hover:-translate-y-0.5 transition-all">
+                            <div class="text-2xl mb-1 group-hover:scale-110 transition-transform">📊</div>
+                            <p class="font-display text-xs tx-muted font-semibold uppercase tracking-wider">Respuestas</p>
+                            <p id="c-total" class="font-display text-2xl font-bold tx-dark mt-0.5">0</p>
+                            <p class="text-xs text-pink-600 font-semibold mt-1 click-hint">Ver lista</p>
+                        </div>
+                        <div onclick="openGuestsListModal('no')" class="click-zone glass-card bg-white/70 backdrop-blur-sm rounded-2xl p-3 border border-black/8 text-center shadow-sm group hover:shadow-md hover:-translate-y-0.5 transition-all">
+                            <div class="text-2xl mb-1 group-hover:scale-110 transition-transform">😢</div>
+                            <p class="font-display text-xs tx-muted font-semibold uppercase tracking-wider">No asisten</p>
+                            <p id="c-no" class="font-display text-2xl font-bold text-red-600 mt-0.5">0</p>
+                            <p class="text-xs text-pink-600 font-semibold mt-1 click-hint">Ver lista</p>
+                        </div>
                     </div>
 
                     <!-- TITULO CON ANIMACIÓN -->
@@ -570,7 +586,6 @@
                 const match = url.match(regExp);
                 if (match && match[2].length == 11) {
                     const videoId = match[2];
-                    // Usamos el formato embed estándar de YouTube, ocupará exactamente el 100% del espacio 9:16
                     container.innerHTML = `<iframe src="https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}&controls=0&showinfo=0&modestbranding=1&rel=0&playsinline=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
                 } else {
                     container.innerHTML = `<iframe src="${url}" frameborder="0" allowfullscreen></iframe>`;
@@ -579,6 +594,78 @@
             } else {
                 ph.style.display = 'flex';
             }
+        }
+
+        // ===== VENTANA FLOAT MODAL PARA LISTADO DE INVITADOS =====
+        async function openGuestsListModal(filter) {
+            const b = document.getElementById('float-modal-body');
+            const m = document.getElementById('float-modal');
+            const allGuests = await fetchGuests();
+            
+            let list = allGuests;
+            if (filter === 'yes') list = allGuests.filter(g => g.att === 'yes');
+            if (filter === 'no') list = allGuests.filter(g => g.att === 'no');
+
+            let titleText = "Lista de Invitados";
+            if (filter === 'yes') titleText = "Invitados Confirmados";
+            if (filter === 'no') titleText = "No Asistirán";
+
+            let listHtml = '';
+            if (list.length === 0) {
+                listHtml = `<p class="font-elegant text-base tx-muted text-center mt-6 mb-4">Aún no hay registros en esta lista.</p>`;
+            } else {
+                listHtml = '<div class="space-y-3 mt-4 max-h-[60vh] overflow-y-auto scroll-area pr-2">';
+                list.forEach(g => {
+                    let statusText = '';
+                    let statusColor = '';
+                    let icon = '';
+                    if (g.att === 'yes') {
+                        icon = '✅';
+                        statusColor = 'text-green-700';
+                        if (g.comp && g.comp.length > 0) {
+                            statusText = `Va con ${g.comp.length} persona${g.comp.length > 1 ? 's' : ''}`;
+                        } else {
+                            statusText = `Va solo`;
+                        }
+                    } else {
+                        icon = '❌';
+                        statusColor = 'text-red-600';
+                        statusText = `No asistirá`;
+                    }
+                    
+                    listHtml += `
+                        <div class="bg-white/80 p-3 rounded-xl border border-pink-200/50 shadow-sm flex items-start gap-3">
+                            <span class="text-xl mt-1">${icon}</span>
+                            <div class="flex-1">
+                                <p class="font-display font-bold text-base tx-dark">${esc(g.name)}</p>
+                                <p class="text-sm font-elegant ${statusColor} font-semibold">${statusText}</p>
+                                ${g.comp && g.comp.length > 0 ? `<p class="text-xs tx-muted font-elegant mt-1">Acompañantes: ${g.comp.map(esc).join(', ')}</p>` : ''}
+                                ${g.msg ? `<p class="text-xs tx-sub font-elegant italic mt-1">"${esc(g.msg)}"</p>` : ''}
+                            </div>
+                        </div>
+                    `;
+                });
+                listHtml += '</div>';
+            }
+
+            b.innerHTML = `
+                <div class="text-center">
+                    <div class="flex items-center justify-center gap-2 mb-2">
+                        <div class="h-px w-10 bg-gradient-to-r from-transparent to-amber-400/60"></div>
+                        <span class="text-amber-500 text-sm twinkle">✦</span>
+                        <div class="h-px w-10 bg-gradient-to-l from-transparent to-amber-400/60"></div>
+                    </div>
+                    <p class="font-script text-3xl tx-dark">${titleText}</p>
+                    <p class="font-elegant text-base tx-muted mb-2">Total: ${list.length}</p>
+                    <div class="flex items-center justify-center gap-2 mb-4">
+                        <div class="h-px w-10 bg-gradient-to-r from-transparent to-amber-400/60"></div>
+                        <span class="text-amber-500 text-sm twinkle">✦</span>
+                        <div class="h-px w-10 bg-gradient-to-l from-transparent to-amber-400/60"></div>
+                    </div>
+                    ${listHtml}
+                </div>
+            `;
+            m.classList.add('on');
         }
 
         function openFloatModal(t){const b=document.getElementById('float-modal-body'),m=document.getElementById('float-modal');
