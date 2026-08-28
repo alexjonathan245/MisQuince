@@ -145,13 +145,6 @@
         .photo-slot img{width:100%;height:100%;object-fit:cover}
         .photo-slot .del-btn{position:absolute;top:4px;right:4px;width:22px;height:22px;border-radius:50%;background:rgba(220,38,38,.85);color:white;display:flex;align-items:center;justify-content:center;font-size:12px;opacity:0;transition:opacity .2s;cursor:pointer;border:none}
         .photo-slot:hover .del-btn{opacity:1}
-        .main-photo-admin{position:relative;border-radius:16px;overflow:hidden;border:2px dashed rgba(0,0,0,.15);aspect-ratio:16/9;cursor:pointer;transition:all .3s}
-        .main-photo-admin:hover{border-color:rgba(0,0,0,.3);background:rgba(0,0,0,.02)}
-        .main-photo-admin img{width:100%;height:100%;object-fit:cover}
-        .main-photo-admin .overlay-hint{position:absolute;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .3s;color:white;font-family:'Cormorant Garamond',serif;font-size:15px}
-        .main-photo-admin:hover .overlay-hint{opacity:1}
-        .main-photo-admin .del-main{position:absolute;top:6px;right:6px;width:28px;height:28px;border-radius:50%;background:rgba(220,38,38,.85);color:white;display:flex;align-items:center;justify-content:center;font-size:14px;cursor:pointer;border:none;opacity:0;transition:opacity .2s}
-        .main-photo-admin:hover .del-main{opacity:1}
         .has-photo .glass-card{background:rgba(255,255,255,.6);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-color:rgba(0,0,0,.1)}
         .tx-dark{color:#111}.tx-sub{color:#333}.tx-muted{color:#666}
 
@@ -160,6 +153,7 @@
         .video-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,#fbbf24,#be185d,#fbbf24,transparent);background-size:200% 100%;animation:shimmer 4s linear infinite;z-index:5;}
         .video-916{position:relative;width:100%;aspect-ratio:9/16;max-height:55vh;margin:0 auto;border-radius:22px;overflow:hidden;background:#000;}
         .video-916 video{width:100%;height:100%;object-fit:cover;}
+        .video-916 iframe{width:100%;height:100%;object-fit:cover;border:none;}
         .video-placeholder-916{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;background:linear-gradient(160deg,#1a1a2e 0%,#16213e 40%,#0f3460 100%);}
         .video-placeholder-916 .vp-icon{width:60px;height:60px;border-radius:50%;border:2px solid rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:1.6rem;animation:pulse-pink 2.5s ease-out infinite;}
 
@@ -174,9 +168,6 @@
         .click-zone{cursor:pointer;transition:all .3s}
         .click-zone:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(0,0,0,.1)}
         .click-zone:active{transform:scale(.97)}
-        .video-admin-slot{position:relative;border-radius:16px;overflow:hidden;border:2px dashed rgba(0,0,0,.15);aspect-ratio:9/16;cursor:pointer;transition:all .3s;background:linear-gradient(135deg,#f8f8f8,#f0f0f0)}
-        .video-admin-slot:hover{border-color:rgba(0,0,0,.3)}
-        .video-admin-slot video{width:100%;height:100%;object-fit:cover}
     </style>
 </head>
 <body>
@@ -284,10 +275,11 @@
                         </div>
                     </div>
 
-                    <!-- ===== VIDEO 9:16 DIRECTO ===== -->
+                    <!-- ===== VIDEO ===== -->
                     <div class="video-card mb-3" id="video-card-home">
                         <div class="video-916" id="video-916-wrap">
-                            <video id="home-video" autoplay loop muted playsinline></video>
+                            <!-- Aquí se inyecta el video o iframe -->
+                            <div id="home-video-container"></div>
                             <div class="video-placeholder-916" id="video-placeholder">
                                 <div class="vp-icon">🎬</div>
                                 <p class="font-script text-2xl text-white/70">Pronto disponible</p>
@@ -435,26 +427,18 @@
                             </div>
                         </div>
 
+                        <!-- ENLACES DE FOTO Y VIDEO (SIN SUBIR ARCHIVOS) -->
                         <div class="bg-white/75 rounded-2xl p-4 border border-black/10 mb-3">
-                            <div class="flex items-center gap-2 mb-3"><span>👑</span><p class="font-display font-bold text-base tx-dark">Foto de Fondo (Tiempo Real)</p></div>
-                            <div class="main-photo-admin" id="main-photo-slot" onclick="document.getElementById('main-photo-input').click()">
-                                <div id="main-photo-placeholder" style="display:flex;align-items:center;justify-content:center;width:100%;height:100%;background:linear-gradient(135deg,#fce7f3,#fdf2f8);flex-direction:column;gap:8px"><span style="font-size:3rem;opacity:.3">📷</span><p style="color:#666;font-family:'Cormorant Garamond',serif;font-size:15px">Toca para subir la foto de fondo</p><p style="color:#999;font-family:'Cormorant Garamond',serif;font-size:12px">Se comprime automáticamente</p></div>
-                                <img id="main-photo-img" class="hidden" alt="Foto quinceanera">
-                                <div class="overlay-hint" id="main-photo-hint" style="display:none"><span>Cambiar foto</span></div>
-                                <button class="del-main" id="main-photo-del" style="display:none" onclick="event.stopPropagation();deleteMainPhoto()">✕</button>
-                            </div>
-                            <input type="file" accept="image/*" class="hidden" id="main-photo-input" onchange="handleMainPhotoUpload(event)">
+                            <div class="flex items-center gap-2 mb-3"><span>📷</span><p class="font-display font-bold text-base tx-dark">Enlace de Foto de Fondo</p></div>
+                            <input type="text" id="main-photo-url-input" placeholder="Pega aquí el link de la foto (https://...)" class="inp w-full px-3 py-2.5 text-base mb-2">
+                            <button onclick="saveMainPhotoUrl()" class="btn-g w-full py-2.5 text-white font-display font-bold text-sm rounded-xl">Guardar Foto de Fondo</button>
                         </div>
                         
                         <div class="bg-white/75 rounded-2xl p-4 border border-black/10 mb-3">
-                            <div class="flex items-center justify-between mb-3"><div class="flex items-center gap-2"><span>🎬</span><p class="font-display font-bold text-base tx-dark">Video (Tiempo Real)</p></div><button onclick="deleteVideo()" id="del-video-btn" class="text-sm px-2.5 py-1 rounded-full bg-red-50 text-red-600 border border-red-200 font-display font-semibold transition-all hover:bg-red-100" style="display:none">Eliminar video</button></div>
-                            <div class="video-admin-slot" id="video-admin-slot" onclick="document.getElementById('video-input').click()">
-                                <div id="video-admin-placeholder" style="display:flex;align-items:center;justify-content:center;width:100%;height:100%;flex-direction:column;gap:8px"><span style="font-size:3rem;opacity:.3">🎥</span><p style="color:#666;font-family:'Cormorant Garamond',serif;font-size:15px">Toca para subir un video</p><p style="color:#999;font-family:'Cormorant Garamond',serif;font-size:12px">Formato vertical (9:16)</p></div>
-                                <video id="video-admin-preview" class="hidden" muted loop playsinline></video>
-                                <div class="overlay-hint" id="video-admin-hint" style="display:none"><span>Cambiar video</span></div>
-                            </div>
-                            <input type="file" accept="video/*" class="hidden" id="video-input" onchange="handleVideoUpload(event)">
-                            <p class="text-sm tx-muted font-elegant mt-2">Si la nube rechaza el video por tamaño, recórtalo en tu celular a 5 segundos.</p>
+                            <div class="flex items-center gap-2 mb-3"><span>🎬</span><p class="font-display font-bold text-base tx-dark">Enlace de Video (YouTube o MP4)</p></div>
+                            <input type="text" id="video-url-input" placeholder="Pega aquí el link de YouTube o .mp4" class="inp w-full px-3 py-2.5 text-base mb-2">
+                            <button onclick="saveVideoUrl()" class="btn-g w-full py-2.5 text-white font-display font-bold text-sm rounded-xl">Guardar Video</button>
+                            <p class="text-xs tx-muted mt-2">Si es YouTube, usa el link normal (ej: https://youtu.be/...)</p>
                         </div>
                         
                         <div class="grid grid-cols-3 gap-2 mb-3">
@@ -462,17 +446,12 @@
                             <div class="bg-red-50 rounded-xl p-3 text-center border border-red-200/50"><p id="a-no" class="font-display text-xl font-bold text-red-600">0</p><p class="text-xs text-red-500 uppercase tracking-wider font-display font-semibold">No van</p></div>
                             <div class="bg-pink-50 rounded-xl p-3 text-center border border-pink-200/50"><p id="a-ppl" class="font-display text-xl font-bold tx-dark">0</p><p class="text-xs tx-muted uppercase tracking-wider font-display font-semibold">Personas</p></div>
                         </div>
-                        <div class="bg-white/75 rounded-2xl p-4 border border-black/10 mb-3">
-                            <div class="flex items-center justify-between mb-3"><div class="flex items-center gap-2"><span>📸</span><p class="font-display font-bold text-base tx-dark">Galeria de Fotos</p></div><span class="text-sm tx-muted font-elegant" id="photo-count">0/5</span></div>
-                            <div id="photo-slots" class="grid grid-cols-5 gap-2 mb-3"></div>
-                            <label class="block w-full py-3 rounded-xl border-2 border-dashed border-black/15 text-center cursor-pointer hover:bg-black/[.02] transition-all"><input type="file" accept="image/*" class="hidden" id="photo-input" onchange="handlePhotoUpload(event)"><span class="tx-muted text-base font-elegant">Toca para subir una foto</span></label>
-                        </div>
+                        
                         <div class="flex items-center gap-2 mb-3 flex-wrap">
                             <button onclick="setF('yes')" id="f-yes" class="text-sm px-3 py-1.5 rounded-full bg-green-100 text-green-800 border border-green-200 font-display font-semibold transition-all">Van</button>
                             <button onclick="setF('no')" id="f-no" class="text-sm px-3 py-1.5 rounded-full bg-white/60 tx-muted border border-black/10 font-display font-semibold transition-all">No van</button>
                             <button onclick="setF('all')" id="f-all" class="text-sm px-3 py-1.5 rounded-full bg-white/60 tx-muted border border-black/10 font-display font-semibold transition-all">Todos</button>
                             <div class="flex-1"></div>
-                            <!-- BOTONES DE DESCARGA PDF Y EXCEL -->
                             <button onclick="expPDF()" class="text-sm px-2.5 py-1.5 rounded-full bg-pink-100 text-pink-700 border border-pink-200 font-display font-semibold transition-all hover:bg-pink-200">📄 PDF</button>
                             <button onclick="expCSV()" class="text-sm px-2.5 py-1.5 rounded-full bg-white/60 tx-muted border border-black/10 font-display font-semibold transition-all hover:bg-black/5">📥 Excel</button>
                             <button onclick="clrAll()" class="text-sm px-2.5 py-1.5 rounded-full bg-red-50 text-red-600 border border-red-200 font-display font-semibold transition-all hover:bg-red-100">🗑️</button>
@@ -527,7 +506,7 @@
             } catch (e) {}
         }
 
-        // ===== FUNCIONES NUBE (FOTOS Y VIDEOS) =====
+        // ===== FUNCIONES NUBE (ENLACES DE FOTO Y VIDEO) =====
         async function fetchMedia() {
             try {
                 const res = await fetch(`${MEDIA_BIN_URL}/latest`, { headers: { 'X-Master-Key': API_KEY } });
@@ -543,8 +522,7 @@
                     headers: { 'Content-Type': 'application/json', 'X-Master-Key': API_KEY },
                     body: JSON.stringify(mediaData)
                 });
-                if (!res.ok) return false;
-                return true;
+                return res.ok;
             } catch (e) { return false; }
         }
 
@@ -566,7 +544,7 @@
             if (auth) renderGuests(d); 
         }
 
-        // ===== MANEJO DE FOTOS Y VIDEO EN NUBE (CON COMPRESIÓN EXTREMA) =====
+        // ===== APLICAR FOTO Y VIDEO (LEYENDO ENLACES) =====
         async function applyPhotoBg() {
             const media = await fetchMedia();
             const s = media.fotos.main;
@@ -577,207 +555,68 @@
             else { b.classList.remove('active'); m.classList.remove('has-photo'); }
         }
 
-        async function renderMainPhoto() {
-            const media = await fetchMedia();
-            const s = media.fotos.main;
-            const i = document.getElementById('main-photo-img');
-            const p = document.getElementById('main-photo-placeholder');
-            const h = document.getElementById('main-photo-hint');
-            const d = document.getElementById('main-photo-del');
-            if(s) { i.src = s; i.classList.remove('hidden'); p.style.display='none'; h.style.display='flex'; d.style.display='flex'; }
-            else { i.classList.add('hidden'); i.src=''; p.style.display='flex'; h.style.display='none'; d.style.display='none'; }
-        }
-
-        function compressImage(file, maxWidth, quality) {
-            return new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.onload = e => {
-                    const img = new Image();
-                    img.onload = () => {
-                        const canvas = document.createElement('canvas');
-                        let width = img.width;
-                        let height = img.height;
-                        if (width > maxWidth) {
-                            height = Math.round((height * maxWidth) / width);
-                            width = maxWidth;
-                        }
-                        canvas.width = width;
-                        canvas.height = height;
-                        const ctx = canvas.getContext('2d');
-                        ctx.drawImage(img, 0, 0, width, height);
-                        resolve(canvas.toDataURL('image/jpeg', quality));
-                    };
-                    img.onerror = reject;
-                    img.src = e.target.result;
-                };
-                reader.onerror = reject;
-                reader.readAsDataURL(file);
-            });
-        }
-
-        async function handleMainPhotoUpload(e) {
-            const f = e.target.files[0]; if(!f) return;
-            toast('⏳','Procesando foto...','Comprimiendo para subirla');
-            try {
-                // Compresión agresiva: 800px ancho, calidad 0.6 (pesa aprox 100KB)
-                const compressedDataUrl = await compressImage(f, 800, 0.6);
-                
-                let media = await fetchMedia();
-                if(!media.fotos) media.fotos = { main: "", galeria: [] };
-                media.fotos.main = compressedDataUrl;
-                
-                toast('⏳','Subiendo a la nube...','Un momento por favor');
-                const success = await saveMedia(media);
-                if(success) {
-                    applyPhotoBg(); renderMainPhoto();
-                    toast('📸','Foto actualizada','Visible para todos');
-                } else {
-                    toast('❌','Error de tamaño','La nube rechazó el archivo');
-                }
-            } catch(err) {
-                toast('❌','Error','No se pudo procesar la foto');
+        // Función para convertir enlace de YouTube normal a embed
+        function getYouTubeEmbedUrl(url) {
+            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+            const match = url.match(regExp);
+            if (match && match[2].length == 11) {
+                return `https://www.youtube.com/embed/${match[2]}?autoplay=1&loop=1&playlist=${match[2]}&mute=1`;
             }
-            e.target.value='';
-        }
-
-        async function deleteMainPhoto() {
-            let media = await fetchMedia();
-            if(media.fotos) media.fotos.main = "";
-            await saveMedia(media);
-            applyPhotoBg(); renderMainPhoto();
-            toast('🗑️','Foto eliminada','');
+            return null;
         }
 
         async function renderHomeVideo() {
             const media = await fetchMedia();
-            const data = media.video || "";
-            const video = document.getElementById('home-video');
+            const url = media.video || "";
+            const container = document.getElementById('home-video-container');
             const ph = document.getElementById('video-placeholder');
-            if(data) {
-                video.src = data; video.play().catch(()=>{});
+            
+            container.innerHTML = ''; // Limpiar
+            
+            if(url) {
+                const ytUrl = getYouTubeEmbedUrl(url);
+                if(ytUrl) {
+                    // Es YouTube
+                    container.innerHTML = `<iframe src="${ytUrl}" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
+                } else if(url.endsWith('.mp4') || url.endsWith('.webm')) {
+                    // Es un archivo MP4 directo
+                    container.innerHTML = `<video src="${url}" autoplay loop muted playsinline></video>`;
+                } else {
+                    // Intentar cargar como iframe genérico
+                    container.innerHTML = `<iframe src="${url}" frameborder="0" allowfullscreen></iframe>`;
+                }
                 ph.style.display = 'none';
             } else {
-                video.src = ''; video.load();
                 ph.style.display = 'flex';
             }
         }
 
-        async function renderVideoAdmin() {
-            const media = await fetchMedia();
-            const data = media.video || "";
-            const preview = document.getElementById('video-admin-preview');
-            const ph = document.getElementById('video-admin-placeholder');
-            const hint = document.getElementById('video-admin-hint');
-            const delBtn = document.getElementById('del-video-btn');
-            if(data) {
-                preview.src = data; preview.classList.remove('hidden'); preview.play().catch(()=>{});
-                ph.style.display = 'none'; hint.style.display = 'flex'; delBtn.style.display = 'block';
-            } else {
-                preview.classList.add('hidden'); preview.src = '';
-                ph.style.display = 'flex'; hint.style.display = 'none'; delBtn.style.display = 'none';
-            }
-        }
-
-        async function handleVideoUpload(e) {
-            const f = e.target.files[0]; if(!f) return;
-            // Limitamos a 1.5MB para asegurar que la nube gratuita lo acepte
-            if(f.size > 1.5*1024*1024) { 
-                toast('❌','Video muy grande','Max 1.5MB. Recorta el video en tu celular.'); 
-                e.target.value=''; 
-                return; 
-            }
-            toast('⏳','Subiendo video...','Esto puede tardar unos segundos');
-            const r = new FileReader();
-            r.onload = async function(ev) {
-                let media = await fetchMedia();
-                media.video = ev.target.result;
-                const success = await saveMedia(media);
-                if(success) {
-                    renderVideoAdmin(); renderHomeVideo();
-                    toast('🎬','Video subido','Visible para todos');
-                } else {
-                    toast('❌','Error al subir','Intenta con un video más corto');
-                }
-            };
-            r.readAsDataURL(f); e.target.value='';
-        }
-
-        async function deleteVideo() {
-            pending = async () => {
-                let media = await fetchMedia();
-                media.video = "";
-                await saveMedia(media);
-                renderVideoAdmin(); renderHomeVideo();
-                toast('🗑️','Video eliminado','');
-            };
-            document.getElementById('mod-t').textContent = 'Eliminar el video?';
-            document.getElementById('mod-c').classList.add('on');
-        }
-
-        // ===== GALERIA DE FOTOS (NUBE) =====
-        async function renderPhotos() {
-            const media = await fetchMedia();
-            const ph = media.fotos?.galeria || [];
-            const sl = document.getElementById('photo-slots');
-            document.getElementById('photo-count').textContent = ph.length + '/5';
-            sl.innerHTML = '';
-            for(let i=0; i<5; i++) {
-                const d = document.createElement('div');
-                d.className = 'photo-slot';
-                if(ph[i]) {
-                    d.innerHTML = `<img src="${ph[i]}" alt="Foto"><button class="del-btn" onclick="event.stopPropagation();delPhoto(${i})">✕</button>`;
-                } else {
-                    d.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;height:100%;color:rgba(0,0,0,.2);font-size:1.4rem">+</div>`;
-                    d.onclick = () => document.getElementById('photo-input').click();
-                }
-                sl.appendChild(d);
-            }
-        }
-
-        async function handlePhotoUpload(e) {
-            const f = e.target.files[0]; if(!f) return;
-            toast('⏳','Procesando foto...','Comprimiendo');
-            try {
-                // Compresión extrema para galería: 400px ancho, calidad 0.5
-                const compressedDataUrl = await compressImage(f, 400, 0.5);
-                
-                let media = await fetchMedia();
-                if(!media.fotos) media.fotos = { main: "", galeria: [] };
-                const ph = media.fotos.galeria;
-                if(ph.length >= 5) { toast('⚠️','Limite','Maximo 5'); e.target.value=''; return; }
-                
-                ph.push(compressedDataUrl);
-                const success = await saveMedia(media);
-                if(success) {
-                    renderPhotos(); renderGallery();
-                    toast('📸','Foto subida','');
-                } else {
-                    toast('❌','Error al subir','Intenta con otra foto');
-                }
-            } catch(err) {
-                toast('❌','Error','No se pudo procesar la foto');
-            }
-            e.target.value='';
-        }
-
-        async function delPhoto(i) {
+        async function saveMainPhotoUrl() {
+            const url = document.getElementById('main-photo-url-input').value.trim();
+            if(!url) { toast('⚠️', 'Falta enlace', 'Pega un link'); return; }
             let media = await fetchMedia();
-            if(media.fotos && media.fotos.galeria) {
-                media.fotos.galeria.splice(i, 1);
-                await saveMedia(media);
-                renderPhotos(); renderGallery();
-                toast('🗑️','Foto eliminada','');
-            }
+            if(!media.fotos) media.fotos = { main: "", galeria: [] };
+            media.fotos.main = url;
+            const ok = await saveMedia(media);
+            if(ok) { applyPhotoBg(); toast('📸', 'Foto guardada', 'Visible para todos'); }
+            else { toast('❌', 'Error', 'No se pudo guardar'); }
         }
 
-        async function renderGallery() {
+        async function saveVideoUrl() {
+            const url = document.getElementById('video-url-input').value.trim();
+            if(!url) { toast('⚠️', 'Falta enlace', 'Pega un link'); return; }
+            let media = await fetchMedia();
+            media.video = url;
+            const ok = await saveMedia(media);
+            if(ok) { renderHomeVideo(); toast('🎬', 'Video guardado', 'Visible para todos'); }
+            else { toast('❌', 'Error', 'No se pudo guardar'); }
+        }
+
+        // Cargar enlaces actuales en los inputs del admin
+        async function loadMediaInputs() {
             const media = await fetchMedia();
-            const ph = media.fotos?.galeria || [];
-            const w = document.getElementById('home-gallery');
-            const g = document.getElementById('gallery-grid');
-            if(!ph.length) { w.classList.add('hidden'); return; }
-            w.classList.remove('hidden');
-            g.innerHTML = ph.map(p => `<div class="rounded-2xl overflow-hidden shadow-sm border border-black/10" style="aspect-ratio:1"><img src="${p}" alt="Foto" class="w-full h-full object-cover"></div>`).join('');
+            document.getElementById('main-photo-url-input').value = media.fotos?.main || "";
+            document.getElementById('video-url-input').value = media.video || "";
         }
 
         function openFloatModal(t){const b=document.getElementById('float-modal-body'),m=document.getElementById('float-modal');
@@ -792,7 +631,7 @@
         function openEnv(){document.getElementById('env-seal').classList.add('go');setTimeout(()=>document.getElementById('env-flap').classList.add('go'),300);setTimeout(()=>{document.getElementById('env-scene').classList.add('bye');setTimeout(()=>{document.getElementById('env-screen').style.display='none';document.getElementById('main-screen').classList.add('show');applyPhotoBg();renderHomeVideo();burstConfetti()},400)},700)}
         function burstConfetti(){const cl=['#ec4899','#f472b6','#fbbf24','#f59e0b','#a855f7','#06b6d4','#f43f5e','#10b981'];for(let i=0;i<40;i++){const c=document.createElement('div');c.className='confetti';const s=4+Math.random()*6;c.style.cssText=`width:${s}px;height:${s*1.4}px;left:${Math.random()*100}%;background:${cl[i%cl.length]};border-radius:${Math.random()>.5?'50%':'2px'};animation:confetti-fall ${2+Math.random()*3}s linear forwards;animation-delay:${Math.random()*.8}s`;document.body.appendChild(c);setTimeout(()=>c.remove(),5000)}}
 
-        function swTab(t){document.querySelectorAll('.tp').forEach(p=>p.classList.add('hidden'));document.querySelectorAll('.tab-b').forEach(b=>b.classList.remove('active'));const p=document.getElementById('p-'+t),b=document.getElementById('t-'+t);if(p){p.classList.remove('hidden');const inner=p.querySelector('div');if(inner){inner.classList.remove('fade-up');void p.offsetWidth;inner.classList.add('fade-up')}}if(b)b.classList.add('active');if(t==='home')setTimeout(renderHomeVideo,100)}
+        function swTab(t){document.querySelectorAll('.tp').forEach(p=>p.classList.add('hidden'));document.querySelectorAll('.tab-b').forEach(b=>b.classList.remove('active'));const p=document.getElementById('p-'+t),b=document.getElementById('t-'+t);if(p){p.classList.remove('hidden');const inner=p.querySelector('div');if(inner){inner.classList.remove('fade-up');void p.offsetWidth;inner.classList.add('fade-up')}}if(b)b.classList.add('active');if(t==='home')setTimeout(renderHomeVideo,100); if(t==='admin' && auth) loadMediaInputs();}
         
         function togComp(){document.getElementById('comp-sec').classList.toggle('hidden',!document.getElementById('att-y').checked)}
         function addComp(){const l=document.getElementById('comp-list');if(l.children.length>=8){toast('⚠️','Limite','Maximo 8');return}const d=document.createElement('div');d.className='flex gap-2 items-center fade-up';d.innerHTML=`<input type="text" placeholder="Nombre del acompanante" class="inp flex-1 px-3 py-2.5 text-base"><button type="button" onclick="this.parentElement.remove()" class="text-red-500 hover:text-red-700 text-lg transition-colors flex-shrink-0 w-9 h-9 flex items-center justify-center">✕</button>`;l.appendChild(d)}
@@ -807,7 +646,7 @@
             document.getElementById('rsvp-form').reset();document.getElementById('comp-sec').classList.add('hidden');document.getElementById('comp-list').innerHTML='';return false
         }
         
-        function doLogin(e){e.preventDefault();const u=document.getElementById('l-user').value.trim(),p=document.getElementById('l-pass').value;if(u===AU&&p===AP){auth=true;document.getElementById('adm-out').classList.add('hidden');document.getElementById('adm-in').classList.remove('hidden');renderPhotos();upAll();renderMainPhoto();renderVideoAdmin();renderLinksList();toast('🔑','Bienvenido','')}else{toast('❌','Incorrecto','')}return false}
+        function doLogin(e){e.preventDefault();const u=document.getElementById('l-user').value.trim(),p=document.getElementById('l-pass').value;if(u===AU&&p===AP){auth=true;document.getElementById('adm-out').classList.add('hidden');document.getElementById('adm-in').classList.remove('hidden');upAll();loadMediaInputs();renderLinksList();toast('🔑','Bienvenido','')}else{toast('❌','Incorrecto','')}return false}
         function doOut(){auth=false;document.getElementById('adm-in').classList.add('hidden');document.getElementById('adm-out').classList.remove('hidden');document.getElementById('l-user').value='';document.getElementById('l-pass').value='';toast('👋','Sesion cerrada','')}
         function setF(f){curF=f;['yes','no','all'].forEach(k=>{const b=document.getElementById('f-'+k);if(k===f){if(k==='yes')b.className='text-sm px-3 py-1.5 rounded-full bg-green-100 text-green-800 border border-green-200 font-display font-semibold transition-all';else if(k==='no')b.className='text-sm px-3 py-1.5 rounded-full bg-red-100 text-red-700 border border-red-200 font-display font-semibold transition-all';else b.className='text-sm px-3 py-1.5 rounded-full bg-pink-100 tx-dark border border-pink-200 font-display font-semibold transition-all'}else{b.className='text-sm px-3 py-1.5 rounded-full bg-white/60 tx-muted border border-black/10 font-display font-semibold transition-all'}});upAll()}
         
@@ -866,7 +705,7 @@
             doc.setTextColor(50);
             
             d.forEach((g, i) => {
-                if (y > 270) { // Nueva página si se llena
+                if (y > 270) { 
                     doc.addPage();
                     y = 20;
                 }
@@ -966,10 +805,8 @@
         document.addEventListener('DOMContentLoaded',function(){
             makePetals();
             upAll();
-            renderPhotos();
-            renderGallery();
-            renderMainPhoto();
-            renderVideoAdmin();
+            applyPhotoBg();
+            renderHomeVideo();
             loadGuestName();
             renderLinksList();
         });
