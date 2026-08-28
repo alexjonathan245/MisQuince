@@ -7,7 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,500&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
     <script>
-        tailwind.config={theme:{extend:{fontFamily:{script:['Great Vibes','cursive'],display:['Playfair Display','serif'],elegant:['Cormorant Garamond',serif']}}}}
+        tailwind.config={theme:{extend:{fontFamily:{script:['Great Vibes','cursive'],display:['Playfair Display','serif'],elegant:['Cormorant Garamond',serif]}}}}
     </script>
     <style>
         *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -405,8 +405,29 @@
                         </div>
                     </div>
                     <div id="adm-in" class="hidden fade-up">
+                        
+                        <!-- NUEVO: GENERADOR DE LINKS -->
                         <div class="bg-white/75 rounded-2xl p-4 border border-black/10 mb-3">
-                            <div class="flex items-center gap-2 mb-3"><span>👑</span><p class="font-display font-bold text-base tx-dark">Foto de Fondo (pantalla completa)</p></div>
+                            <div class="flex items-center gap-2 mb-3"><span>🔗</span><p class="font-display font-bold text-base tx-dark">Generar Link Personal</p></div>
+                            <div class="flex gap-2 mb-2">
+                                <input type="text" id="link-name" placeholder="Ej: Sr. Jaime Sanchez" class="inp flex-1 px-3 py-2.5 text-base">
+                                <button onclick="generateLink()" class="btn-g px-4 py-2.5 text-white font-display font-bold text-sm rounded-xl">Crear</button>
+                            </div>
+                            <div id="link-output" class="hidden mt-3 bg-gray-50 rounded-xl p-3 border border-gray-200">
+                                <p class="text-xs tx-muted mb-1">Copia este enlace y envialo por WhatsApp:</p>
+                                <div class="flex gap-2 items-center">
+                                    <input type="text" id="link-url" class="inp flex-1 px-2 py-2 text-xs bg-white" readonly>
+                                    <button onclick="copyLink()" class="bg-green-500 hover:bg-green-600 text-white text-sm px-3 py-2 rounded-xl font-bold">Copiar</button>
+                                </div>
+                            </div>
+                            <div class="mt-3">
+                                <p class="text-xs tx-muted mb-2">Links generados:</p>
+                                <div id="links-list" class="space-y-1 max-h-32 overflow-y-auto scroll-area"></div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white/75 rounded-2xl p-4 border border-black/10 mb-3">
+                            <div class="flex items-center gap-2 mb-3"><span>👑</span><p class="font-display font-bold text-base tx-dark">Foto de Fondo (Tiempo Real)</p></div>
                             <div class="main-photo-admin" id="main-photo-slot" onclick="document.getElementById('main-photo-input').click()">
                                 <div id="main-photo-placeholder" style="display:flex;align-items:center;justify-content:center;width:100%;height:100%;background:linear-gradient(135deg,#fce7f3,#fdf2f8);flex-direction:column;gap:8px"><span style="font-size:3rem;opacity:.3">📷</span><p style="color:#666;font-family:'Cormorant Garamond',serif;font-size:15px">Toca para subir la foto de fondo</p></div>
                                 <img id="main-photo-img" class="hidden" alt="Foto quinceanera">
@@ -415,8 +436,9 @@
                             </div>
                             <input type="file" accept="image/*" class="hidden" id="main-photo-input" onchange="handleMainPhotoUpload(event)">
                         </div>
+                        
                         <div class="bg-white/75 rounded-2xl p-4 border border-black/10 mb-3">
-                            <div class="flex items-center justify-between mb-3"><div class="flex items-center gap-2"><span>🎬</span><p class="font-display font-bold text-base tx-dark">Video (formato 9:16)</p></div><button onclick="deleteVideo()" id="del-video-btn" class="text-sm px-2.5 py-1 rounded-full bg-red-50 text-red-600 border border-red-200 font-display font-semibold transition-all hover:bg-red-100" style="display:none">Eliminar video</button></div>
+                            <div class="flex items-center justify-between mb-3"><div class="flex items-center gap-2"><span>🎬</span><p class="font-display font-bold text-base tx-dark">Video (Tiempo Real)</p></div><button onclick="deleteVideo()" id="del-video-btn" class="text-sm px-2.5 py-1 rounded-full bg-red-50 text-red-600 border border-red-200 font-display font-semibold transition-all hover:bg-red-100" style="display:none">Eliminar video</button></div>
                             <div class="video-admin-slot" id="video-admin-slot" onclick="document.getElementById('video-input').click()">
                                 <div id="video-admin-placeholder" style="display:flex;align-items:center;justify-content:center;width:100%;height:100%;flex-direction:column;gap:8px"><span style="font-size:3rem;opacity:.3">🎥</span><p style="color:#666;font-family:'Cormorant Garamond',serif;font-size:15px">Toca para subir un video</p><p style="color:#999;font-family:'Cormorant Garamond',serif;font-size:12px">MP4, WebM o MOV · 9:16 recomendado</p></div>
                                 <video id="video-admin-preview" class="hidden" muted loop playsinline></video>
@@ -425,6 +447,7 @@
                             <input type="file" accept="video/*" class="hidden" id="video-input" onchange="handleVideoUpload(event)">
                             <p class="text-sm tx-muted font-elegant mt-2">El video se reproduce en loop automatico. Formato vertical 9:16 recomendado.</p>
                         </div>
+                        
                         <div class="grid grid-cols-3 gap-2 mb-3">
                             <div class="bg-green-50 rounded-xl p-3 text-center border border-green-200/50"><p id="a-yes" class="font-display text-xl font-bold text-green-700">0</p><p class="text-xs text-green-600 uppercase tracking-wider font-display font-semibold">Van</p></div>
                             <div class="bg-red-50 rounded-xl p-3 text-center border border-red-200/50"><p id="a-no" class="font-display text-xl font-bold text-red-600">0</p><p class="text-xs text-red-500 uppercase tracking-wider font-display font-semibold">No van</p></div>
@@ -465,42 +488,51 @@
     <div id="toast" class="toast-c"><div class="bg-white border border-black/10 rounded-2xl px-5 py-3 shadow-xl flex items-center gap-3"><span id="t-ico" class="text-xl">✅</span><div><p id="t-tit" class="font-display font-bold tx-dark text-sm"></p><p id="t-msg" class="tx-muted text-sm font-elegant"></p></div></div></div>
 
     <script>
-        // ===== TUS DATOS DE JSONBIN (CONFIGURADO) =====
-        const BIN_URL = "https://api.jsonbin.io/v3/b/6a91d516f5f4af5e294ef1c2";
+        // ===== TUS DATOS DE JSONBIN CONFIGURADOS =====
+        const BIN_URL = "https://api.jsonbin.io/v3/b/6a91d516f5f4af5e294ef1c2"; // Para Invitados
+        const MEDIA_BIN_URL = "https://api.jsonbin.io/v3/b/6a91d9c8f5f4af5e294efed0"; // Para Fotos y Videos
         const API_KEY = "$2a$10$BAhARkBhTbB6InHiDUxsIOgRZhSFTDZzDELpV8NZKt0tBqliPX/FK";
-        // ===============================================
+        // =============================================
 
-        // CONTRASEÑA DEL ADMIN (Cámbiala si quieres)
         const AU='admin', AP='admin'; 
         let auth=false, curF='yes', pending=null, fxLock=false;
 
-        // ===== FUNCIONES PARA BASE DE DATOS EN CLOUD =====
+        // ===== FUNCIONES NUBE (INVITADOS) =====
         async function fetchGuests() {
             try {
-                const res = await fetch(`${BIN_URL}/latest`, {
-                    headers: { 'X-Master-Key': API_KEY }
-                });
+                const res = await fetch(`${BIN_URL}/latest`, { headers: { 'X-Master-Key': API_KEY } });
                 const data = await res.json();
                 return data.record.invitados || [];
-            } catch (e) {
-                console.error("Error al leer la nube:", e);
-                return [];
-            }
+            } catch (e) { return []; }
         }
 
         async function saveGuests(invitados) {
             try {
                 await fetch(BIN_URL, {
                     method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-Master-Key': API_KEY
-                    },
+                    headers: { 'Content-Type': 'application/json', 'X-Master-Key': API_KEY },
                     body: JSON.stringify({ "invitados": invitados })
                 });
-            } catch (e) {
-                console.error("Error al guardar en la nube:", e);
-            }
+            } catch (e) {}
+        }
+
+        // ===== FUNCIONES NUBE (FOTOS Y VIDEOS) =====
+        async function fetchMedia() {
+            try {
+                const res = await fetch(`${MEDIA_BIN_URL}/latest`, { headers: { 'X-Master-Key': API_KEY } });
+                const data = await res.json();
+                return data.record || { fotos: { main: "", galeria: [] }, video: "" };
+            } catch (e) { return { fotos: { main: "", galeria: [] }, video: "" }; }
+        }
+
+        async function saveMedia(mediaData) {
+            try {
+                await fetch(MEDIA_BIN_URL, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json', 'X-Master-Key': API_KEY },
+                    body: JSON.stringify(mediaData)
+                });
+            } catch (e) {}
         }
 
         async function upAll() {
@@ -521,52 +553,163 @@
             if (auth) renderGuests(d); 
         }
 
-        // Las fotos y videos se quedan en local para no pagar servidores pesados
-        function getPhotos(){try{return JSON.parse(localStorage.getItem('xv_photos')||'[]')}catch(e){return[]}}
-        function setPhotos(p){localStorage.setItem('xv_photos',JSON.stringify(p));renderPhotos();renderGallery()}
-        function getMainPhoto(){return localStorage.getItem('xv_main_photo')||''}
-        function setMainPhotoData(data){localStorage.setItem('xv_main_photo',data);renderMainPhoto();applyPhotoBg()}
-        function delMainPhotoData(){localStorage.removeItem('xv_main_photo');renderMainPhoto();applyPhotoBg()}
-        function getVideoData(){return localStorage.getItem('xv_video')||''}
-        function setVideoData(data){localStorage.setItem('xv_video',data);renderVideoAdmin();renderHomeVideo()}
-        function deleteVideoData(){localStorage.removeItem('xv_video');renderVideoAdmin();renderHomeVideo()}
+        // ===== MANEJO DE FOTOS Y VIDEO EN NUBE =====
+        async function applyPhotoBg() {
+            const media = await fetchMedia();
+            const s = media.fotos.main;
+            const b = document.getElementById('full-photo-bg');
+            const i = document.getElementById('full-photo-img');
+            const m = document.getElementById('main-screen');
+            if(s) { i.src = s; b.classList.add('active'); m.classList.add('has-photo'); }
+            else { b.classList.remove('active'); m.classList.remove('has-photo'); }
+        }
 
-        function applyPhotoBg(){const s=getMainPhoto(),b=document.getElementById('full-photo-bg'),i=document.getElementById('full-photo-img'),m=document.getElementById('main-screen');if(s){i.src=s;b.classList.add('active');m.classList.add('has-photo')}else{b.classList.remove('active');m.classList.remove('has-photo')}}
-        function renderMainPhoto(){const s=getMainPhoto(),i=document.getElementById('main-photo-img'),p=document.getElementById('main-photo-placeholder'),h=document.getElementById('main-photo-hint'),d=document.getElementById('main-photo-del');if(s){i.src=s;i.classList.remove('hidden');p.style.display='none';h.style.display='flex';d.style.display='flex'}else{i.classList.add('hidden');i.src='';p.style.display='flex';h.style.display='none';d.style.display='none'}}
-        function handleMainPhotoUpload(e){const f=e.target.files[0];if(!f)return;if(f.size>15*1024*1024){toast('⚠️','Muy grande','Menor a 15MB');e.target.value='';return}const r=new FileReader();r.onload=function(ev){const img=new Image();img.onload=function(){const c=document.createElement('canvas');const mx=1400;let w=img.width,h=img.height;if(w>mx){h=Math.round(h*(mx/w));w=mx}c.width=Math.max(1,w);c.height=Math.max(1,h);c.getContext('2d').drawImage(img,0,0,w,h);setMainPhotoData(c.toDataURL('image/jpeg',0.88));toast('📸','Foto actualizada','Fondo completo')};img.src=ev.target.result};r.readAsDataURL(f);e.target.value=''}
-        function deleteMainPhoto(){delMainPhotoData();toast('🗑️','Foto eliminada','')}
+        async function renderMainPhoto() {
+            const media = await fetchMedia();
+            const s = media.fotos.main;
+            const i = document.getElementById('main-photo-img');
+            const p = document.getElementById('main-photo-placeholder');
+            const h = document.getElementById('main-photo-hint');
+            const d = document.getElementById('main-photo-del');
+            if(s) { i.src = s; i.classList.remove('hidden'); p.style.display='none'; h.style.display='flex'; d.style.display='flex'; }
+            else { i.classList.add('hidden'); i.src=''; p.style.display='flex'; h.style.display='none'; d.style.display='none'; }
+        }
 
-        function renderHomeVideo(){
-            const data=getVideoData();
-            const video=document.getElementById('home-video');
-            const ph=document.getElementById('video-placeholder');
-            const card=document.getElementById('video-card-home');
-            if(data){
-                video.src=data;video.play().catch(()=>{});
-                ph.style.display='none';
-                card.style.display='block';
+        async function handleMainPhotoUpload(e) {
+            const f = e.target.files[0]; if(!f) return;
+            if(f.size > 2*1024*1024) { toast('⚠️','Muy grande','Max 2MB para subirla a la nube'); e.target.value=''; return; }
+            const r = new FileReader();
+            r.onload = async function(ev) {
+                let media = await fetchMedia();
+                if(!media.fotos) media.fotos = { main: "", galeria: [] };
+                media.fotos.main = ev.target.result;
+                await saveMedia(media);
+                applyPhotoBg(); renderMainPhoto();
+                toast('📸','Foto actualizada','Visible para todos');
+            };
+            r.readAsDataURL(f); e.target.value='';
+        }
+
+        async function deleteMainPhoto() {
+            let media = await fetchMedia();
+            if(media.fotos) media.fotos.main = "";
+            await saveMedia(media);
+            applyPhotoBg(); renderMainPhoto();
+            toast('🗑️','Foto eliminada','');
+        }
+
+        async function renderHomeVideo() {
+            const media = await fetchMedia();
+            const data = media.video || "";
+            const video = document.getElementById('home-video');
+            const ph = document.getElementById('video-placeholder');
+            if(data) {
+                video.src = data; video.play().catch(()=>{});
+                ph.style.display = 'none';
             } else {
-                video.src='';video.load();
-                ph.style.display='flex';
-                card.style.display='block';
+                video.src = ''; video.load();
+                ph.style.display = 'flex';
             }
         }
 
-        function renderVideoAdmin(){
-            const data=getVideoData(),preview=document.getElementById('video-admin-preview'),ph=document.getElementById('video-admin-placeholder'),hint=document.getElementById('video-admin-hint'),delBtn=document.getElementById('del-video-btn');
-            if(data){preview.src=data;preview.classList.remove('hidden');preview.play().catch(()=>{});ph.style.display='none';hint.style.display='flex';delBtn.style.display='block'}
-            else{preview.classList.add('hidden');preview.src='';ph.style.display='flex';hint.style.display='none';delBtn.style.display='none'}
+        async function renderVideoAdmin() {
+            const media = await fetchMedia();
+            const data = media.video || "";
+            const preview = document.getElementById('video-admin-preview');
+            const ph = document.getElementById('video-admin-placeholder');
+            const hint = document.getElementById('video-admin-hint');
+            const delBtn = document.getElementById('del-video-btn');
+            if(data) {
+                preview.src = data; preview.classList.remove('hidden'); preview.play().catch(()=>{});
+                ph.style.display = 'none'; hint.style.display = 'flex'; delBtn.style.display = 'block';
+            } else {
+                preview.classList.add('hidden'); preview.src = '';
+                ph.style.display = 'flex'; hint.style.display = 'none'; delBtn.style.display = 'none';
+            }
         }
 
-        function handleVideoUpload(e){
-            const f=e.target.files[0];if(!f)return;
-            if(f.size>80*1024*1024){toast('⚠️','Muy grande','Menor a 80MB');e.target.value='';return}
-            const r=new FileReader();
-            r.onload=function(ev){setVideoData(ev.target.result);toast('🎬','Video subido','Se reproduce en loop automatico')};
-            r.readAsDataURL(f);e.target.value='';
+        async function handleVideoUpload(e) {
+            const f = e.target.files[0]; if(!f) return;
+            if(f.size > 3*1024*1024) { toast('⚠️','Video muy grande','Max 3MB para la nube gratuita'); e.target.value=''; return; }
+            const r = new FileReader();
+            r.onload = async function(ev) {
+                let media = await fetchMedia();
+                media.video = ev.target.result;
+                await saveMedia(media);
+                renderVideoAdmin(); renderHomeVideo();
+                toast('🎬','Video subido','Visible para todos');
+            };
+            r.readAsDataURL(f); e.target.value='';
         }
 
-        function deleteVideo(){pending=()=>{deleteVideoData();toast('🗑️','Video eliminado','')};document.getElementById('mod-t').textContent='Eliminar el video?';document.getElementById('mod-c').classList.add('on')}
+        async function deleteVideo() {
+            pending = async () => {
+                let media = await fetchMedia();
+                media.video = "";
+                await saveMedia(media);
+                renderVideoAdmin(); renderHomeVideo();
+                toast('🗑️','Video eliminado','');
+            };
+            document.getElementById('mod-t').textContent = 'Eliminar el video?';
+            document.getElementById('mod-c').classList.add('on');
+        }
+
+        // ===== GALERIA DE FOTOS (NUBE) =====
+        async function renderPhotos() {
+            const media = await fetchMedia();
+            const ph = media.fotos?.galeria || [];
+            const sl = document.getElementById('photo-slots');
+            document.getElementById('photo-count').textContent = ph.length + '/5';
+            sl.innerHTML = '';
+            for(let i=0; i<5; i++) {
+                const d = document.createElement('div');
+                d.className = 'photo-slot';
+                if(ph[i]) {
+                    d.innerHTML = `<img src="${ph[i]}" alt="Foto"><button class="del-btn" onclick="event.stopPropagation();delPhoto(${i})">✕</button>`;
+                } else {
+                    d.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;height:100%;color:rgba(0,0,0,.2);font-size:1.4rem">+</div>`;
+                    d.onclick = () => document.getElementById('photo-input').click();
+                }
+                sl.appendChild(d);
+            }
+        }
+
+        async function handlePhotoUpload(e) {
+            const f = e.target.files[0]; if(!f) return;
+            if(f.size > 1*1024*1024) { toast('⚠️','Foto muy grande','Max 1MB por foto'); e.target.value=''; return; }
+            let media = await fetchMedia();
+            if(!media.fotos) media.fotos = { main: "", galeria: [] };
+            const ph = media.fotos.galeria;
+            if(ph.length >= 5) { toast('⚠️','Limite','Maximo 5'); e.target.value=''; return; }
+            const r = new FileReader();
+            r.onload = async function(ev) {
+                ph.push(ev.target.result);
+                await saveMedia(media);
+                renderPhotos(); renderGallery();
+                toast('📸','Foto subida','');
+            };
+            r.readAsDataURL(f); e.target.value='';
+        }
+
+        async function delPhoto(i) {
+            let media = await fetchMedia();
+            if(media.fotos && media.fotos.galeria) {
+                media.fotos.galeria.splice(i, 1);
+                await saveMedia(media);
+                renderPhotos(); renderGallery();
+                toast('🗑️','Foto eliminada','');
+            }
+        }
+
+        async function renderGallery() {
+            const media = await fetchMedia();
+            const ph = media.fotos?.galeria || [];
+            const w = document.getElementById('home-gallery');
+            const g = document.getElementById('gallery-grid');
+            if(!ph.length) { w.classList.add('hidden'); return; }
+            w.classList.remove('hidden');
+            g.innerHTML = ph.map(p => `<div class="rounded-2xl overflow-hidden shadow-sm border border-black/10" style="aspect-ratio:1"><img src="${p}" alt="Foto" class="w-full h-full object-cover"></div>`).join('');
+        }
 
         function openFloatModal(t){const b=document.getElementById('float-modal-body'),m=document.getElementById('float-modal');
             if(t==='location'){b.innerHTML=`<div class="text-center"><div class="flex items-center justify-center gap-2 mb-4"><div class="h-px w-12 bg-gradient-to-r from-transparent to-amber-400/60"></div><span class="text-amber-500 text-base twinkle">✦</span><div class="h-px w-12 bg-gradient-to-l from-transparent to-amber-400/60"></div></div><span class="text-5xl block mb-3">📍</span><p class="font-display text-xl tx-dark font-bold mb-1">Terminal Terrestre</p><p class="font-elegant text-base tx-muted mb-4">Lugar del evento</p><a href="https://maps.app.goo.gl/DPAvr3Pw6BaHSzAQ8" target="_blank" class="btn-g inline-flex items-center gap-2 px-6 py-3 text-white font-display font-semibold text-base"><span>Abrir en Google Maps</span><span>🗺️</span></a><p class="text-sm tx-muted font-elegant mt-3">Sabado 17 de Octubre, 7:00 PM</p></div>`;m.classList.add('on')}
@@ -595,7 +738,7 @@
             document.getElementById('rsvp-form').reset();document.getElementById('comp-sec').classList.add('hidden');document.getElementById('comp-list').innerHTML='';return false
         }
         
-        function doLogin(e){e.preventDefault();const u=document.getElementById('l-user').value.trim(),p=document.getElementById('l-pass').value;if(u===AU&&p===AP){auth=true;document.getElementById('adm-out').classList.add('hidden');document.getElementById('adm-in').classList.remove('hidden');renderPhotos();upAll();renderVideoAdmin();toast('🔑','Bienvenido','')}else{toast('❌','Incorrecto','')}return false}
+        function doLogin(e){e.preventDefault();const u=document.getElementById('l-user').value.trim(),p=document.getElementById('l-pass').value;if(u===AU&&p===AP){auth=true;document.getElementById('adm-out').classList.add('hidden');document.getElementById('adm-in').classList.remove('hidden');renderPhotos();upAll();renderMainPhoto();renderVideoAdmin();renderLinksList();toast('🔑','Bienvenido','')}else{toast('❌','Incorrecto','')}return false}
         function doOut(){auth=false;document.getElementById('adm-in').classList.add('hidden');document.getElementById('adm-out').classList.remove('hidden');document.getElementById('l-user').value='';document.getElementById('l-pass').value='';toast('👋','Sesion cerrada','')}
         function setF(f){curF=f;['yes','no','all'].forEach(k=>{const b=document.getElementById('f-'+k);if(k===f){if(k==='yes')b.className='text-sm px-3 py-1.5 rounded-full bg-green-100 text-green-800 border border-green-200 font-display font-semibold transition-all';else if(k==='no')b.className='text-sm px-3 py-1.5 rounded-full bg-red-100 text-red-700 border border-red-200 font-display font-semibold transition-all';else b.className='text-sm px-3 py-1.5 rounded-full bg-pink-100 tx-dark border border-pink-200 font-display font-semibold transition-all'}else{b.className='text-sm px-3 py-1.5 rounded-full bg-white/60 tx-muted border border-black/10 font-display font-semibold transition-all'}});upAll()}
         
@@ -632,13 +775,68 @@
         }
         function closeMod(){document.getElementById('mod-c').classList.remove('on');pending=null}
         function doPending(){if(pending){const fn=pending;closeMod();fn()}}
-        function renderPhotos(){const ph=getPhotos(),sl=document.getElementById('photo-slots');document.getElementById('photo-count').textContent=ph.length+'/5';sl.innerHTML='';for(let i=0;i<5;i++){const d=document.createElement('div');d.className='photo-slot';if(ph[i]){d.innerHTML=`<img src="${ph[i]}" alt="Foto"><button class="del-btn" onclick="event.stopPropagation();delPhoto(${i})">✕</button>`}else{d.innerHTML=`<div style="display:flex;align-items:center;justify-content:center;height:100%;color:rgba(0,0,0,.2);font-size:1.4rem">+</div>`;d.onclick=()=>document.getElementById('photo-input').click()}sl.appendChild(d)}}
-        function handlePhotoUpload(e){const f=e.target.files[0];if(!f)return;const ph=getPhotos();if(ph.length>=5){toast('⚠️','Limite','Maximo 5');e.target.value='';return}const r=new FileReader();r.onload=function(ev){const img=new Image();img.onload=function(){const c=document.createElement('canvas');const mx=600;let w=img.width,h=img.height;if(w>mx){h=Math.round(h*(mx/w));w=mx}c.width=Math.max(1,w);c.height=Math.max(1,h);c.getContext('2d').drawImage(img,0,0,w,h);ph.push(c.toDataURL('image/jpeg',0.75));setPhotos(ph);toast('📸','Foto subida','')};img.src=ev.target.result};r.readAsDataURL(f);e.target.value=''}
-        function delPhoto(i){const ph=getPhotos();ph.splice(i,1);setPhotos(ph);toast('🗑️','Foto eliminada','')}
-        function renderGallery(){const ph=getPhotos(),w=document.getElementById('home-gallery'),g=document.getElementById('gallery-grid');if(!ph.length){w.classList.add('hidden');return}w.classList.remove('hidden');g.innerHTML=ph.map(p=>`<div class="rounded-2xl overflow-hidden shadow-sm border border-black/10" style="aspect-ratio:1"><img src="${p}" alt="Foto" class="w-full h-full object-cover"></div>`).join('')}
+        
         async function expCSV(){const d=await fetchGuests();if(!d.length){toast('⚠️','Sin datos','');return}let c='Nombre,Asistencia,Acompanantes,Mensaje,Fecha\n';d.forEach(g=>{c+=`"${g.name}","${g.att==='yes'?'Si':'No'}","${(g.comp||[]).join('; ')}","${g.msg||''}","${g.time||''}"\n`});const b=new Blob(['\ufeff'+c],{type:'text/csv;charset=utf-8;'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='xv_confirmaciones.csv';a.click();toast('📥','Descargado','')}
         let tt=null;function toast(i,t,m){const e=document.getElementById('toast');document.getElementById('t-ico').textContent=i;document.getElementById('t-tit').textContent=t;document.getElementById('t-msg').textContent=m;e.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>e.classList.remove('show'),3000)}
         function esc(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML}
+
+        // ===== GENERADOR DE LINKS =====
+        function generateLink() {
+            const name = document.getElementById('link-name').value.trim();
+            if(!name) { toast('⚠️', 'Falta nombre', ''); return; }
+            
+            // Reemplazamos espacios por + para la URL
+            const urlName = name.replace(/\s+/g, '+');
+            const baseUrl = window.location.href.split('?')[0];
+            const fullUrl = `${baseUrl}?invitado=${urlName}`;
+            
+            document.getElementById('link-url').value = fullUrl;
+            document.getElementById('link-output').classList.remove('hidden');
+            
+            // Guardar en localStorage para no perderlos
+            let links = JSON.parse(localStorage.getItem('custom_links') || '[]');
+            if(!links.find(l => l.name === name)) {
+                links.push({ name: name, url: fullUrl });
+                localStorage.setItem('custom_links', JSON.stringify(links));
+            }
+            renderLinksList();
+            toast('✅', 'Link creado', 'Cópialo arriba');
+        }
+
+        function copyLink() {
+            const input = document.getElementById('link-url');
+            input.select();
+            document.execCommand('copy');
+            toast('📋', 'Copiado', 'Pégalo en WhatsApp');
+        }
+
+        function renderLinksList() {
+            const list = document.getElementById('links-list');
+            let links = JSON.parse(localStorage.getItem('custom_links') || '[]');
+            if(!links.length) { list.innerHTML = '<p class="text-xs tx-muted">Aún no has creado links.</p>'; return; }
+            list.innerHTML = links.map((l, i) => `
+                <div class="flex justify-between items-center bg-gray-50 p-2 rounded-lg text-xs">
+                    <span class="tx-dark truncate flex-1">${l.name}</span>
+                    <button onclick="copySavedLink(${i})" class="text-blue-500 hover:text-blue-700 ml-2">Copiar</button>
+                    <button onclick="deleteSavedLink(${i})" class="text-red-400 hover:text-red-600 ml-2">✕</button>
+                </div>
+            `).join('');
+        }
+
+        function copySavedLink(i) {
+            let links = JSON.parse(localStorage.getItem('custom_links') || '[]');
+            const url = links[i].url;
+            navigator.clipboard.writeText(url).then(() => {
+                toast('📋', 'Copiado', links[i].name);
+            });
+        }
+
+        function deleteSavedLink(i) {
+            let links = JSON.parse(localStorage.getItem('custom_links') || '[]');
+            links.splice(i, 1);
+            localStorage.setItem('custom_links', JSON.stringify(links));
+            renderLinksList();
+        }
 
         function loadGuestName() {
             const urlParams = new URLSearchParams(window.location.search);
@@ -660,6 +858,7 @@
             renderMainPhoto();
             renderVideoAdmin();
             loadGuestName();
+            renderLinksList();
         });
     </script>
 </body>
