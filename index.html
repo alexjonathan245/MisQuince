@@ -15,7 +15,7 @@
         html,body{height:100%;overflow:hidden}
         body{font-family:'Cormorant Garamond',serif}
 
-        /* NUEVO TEMA CELESTE */
+        /* TEMA CELESTE ELEGANTE */
         .bg-main{position:relative;overflow:hidden;height:100%;background:#f0f9ff}
         .bg-main::before{content:'';position:absolute;inset:0;background-image:radial-gradient(circle at 15% 20%,rgba(125,211,252,.15) 0%,transparent 50%),radial-gradient(circle at 85% 30%,rgba(56,189,248,.1) 0%,transparent 50%),radial-gradient(circle at 50% 80%,rgba(186,230,253,.1) 0%,transparent 50%);pointer-events:none;z-index:0}
 
@@ -60,19 +60,6 @@
         @keyframes soft-glow{0%,100%{box-shadow:0 0 15px rgba(2,132,199,.08)}50%{box-shadow:0 0 30px rgba(2,132,199,.15)}}.soft-glow{animation:soft-glow 4s ease-in-out infinite}
         @keyframes click-hint{0%,100%{opacity:.6;transform:translateY(0)}50%{opacity:1;transform:translateY(-2px)}}.click-hint{animation:click-hint 2s ease-in-out infinite}
 
-        @keyframes heart-explode {
-            0% { transform: scale(0.8); opacity: 0.8; }
-            50% { transform: scale(1.4); opacity: 1; filter: drop-shadow(0 0 10px rgba(14,165,233,0.8)); }
-            100% { transform: scale(0.8); opacity: 0.8; }
-        }
-        .heart-explode { animation: heart-explode 1.2s ease-in-out infinite; display: inline-block; }
-
-        @keyframes gentle-float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-8px); }
-        }
-        .text-animated { animation: gentle-float 4s ease-in-out infinite; }
-
         .inp{background:white;border:1.5px solid rgba(14,165,233,.2);color:#111;transition:all .3s;font-family:'Cormorant Garamond',serif;border-radius:14px;font-size:16px}
         .inp:focus{outline:none;border-color:#0ea5e9;box-shadow:0 0 0 3px rgba(14,165,233,.1)}
         .inp::placeholder{color:rgba(0,0,0,.3)}
@@ -82,7 +69,6 @@
         .btn-g:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(2,132,199,.3)}
         .btn-g:active{transform:scale(.98)}
         
-        /* BOTONES DE ASISTENCIA GRANDES */
         .btn-attend { transition: all 0.3s; border-radius: 16px; font-family: 'Playfair Display', serif; }
         .btn-yes { background: linear-gradient(135deg, #38bdf8, #0284c7); color: white; box-shadow: 0 4px 15px rgba(14,165,233,.3); }
         .btn-yes:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(14,165,233,.4); }
@@ -101,13 +87,6 @@
         .invite-box::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,#0ea5e9,#38bdf8,#0ea5e9,transparent);background-size:200% 100%;animation:shimmer 4s linear infinite}
         .glass-card{background:rgba(255,255,255,.7);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.5)}
         .tx-dark{color:#0c4a6e}.tx-sub{color:#0284c7}.tx-muted{color:#64748b}
-
-        .video-card{position:relative;border-radius:24px;overflow:hidden;box-shadow:0 10px 40px rgba(0,0,0,.1),0 2px 10px rgba(0,0,0,.05);border:1.5px solid rgba(125,211,252,.2);background:#111;}
-        .video-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,#0ea5e9,#38bdf8,#0ea5e9,transparent);background-size:200% 100%;animation:shimmer 4s linear infinite;z-index:5;}
-        .video-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,#38bdf8,#0ea5e9,#38bdf8,transparent);background-size:200% 100%;animation:shimmer 4s linear infinite;z-index:5;}
-        .video-916{position:relative;width:100%;aspect-ratio:9/16;max-height:55vh;margin:0 auto;border-radius:22px;overflow:hidden;background:#000;}
-        .video-wrapper { position: absolute; inset: 0; pointer-events: none; z-index: 2; overflow: hidden; }
-        .video-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
 
         .float-modal{position:fixed;inset:0;z-index:2000;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.6);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);opacity:0;pointer-events:none;transition:opacity .35s}
         .float-modal.on{opacity:1;pointer-events:all}
@@ -166,13 +145,14 @@
         <div class="spark" style="top:5%;left:8%;animation-delay:0s;z-index:5"></div>
         <div class="spark" style="top:12%;right:12%;animation-delay:.8s;width:5px;height:5px;z-index:5"></div>
 
-        <header class="content-layer flex-shrink-0 px-4 pt-4 pb-2 relative z-20">
+        <header class="content-layer flex-shrink-0 px-4 pt-6 pb-2 relative z-20">
             <div class="max-w-lg mx-auto text-center">
                 <div class="flex items-center justify-center gap-1.5 mb-2">
                     <span class="text-xl crown-tilt inline-block">👑</span>
                     <span class="font-script text-3xl tx-dark">XV Años</span>
                 </div>
-                <h1 class="font-script text-4xl shimmer leading-tight">Gaby Criollo Garcia</h1>
+                <!-- TÍTULO SOLICITADO -->
+                <h1 class="font-script text-4xl shimmer leading-tight">Te invito a celebrar mis XV años</h1>
             </div>
         </header>
 
@@ -260,25 +240,17 @@
                         </div>
                     </div>
 
-                    <!-- CONTADOR SUTIL -->
-                    <div class="text-center mb-8">
-                        <p class="font-elegant text-base tx-muted">Hasta ahora, <span id="c-yes" class="font-bold tx-dark">0</span> personas han confirmado su asistencia 💙</p>
-                    </div>
-
-                    <!-- VIDEO -->
-                    <div class="video-card mb-8" id="video-card-home">
-                        <div class="video-916" id="video-916-wrap">
-                            <div class="video-wrapper" id="home-video-container"></div>
-                            <div class="absolute inset-0 flex flex-col items-center justify-center gap-2 bg-slate-900 z-10">
-                                <div class="text-4xl">🎬</div>
-                                <p class="font-script text-2xl text-white/70">Recuerdos</p>
-                            </div>
-                        </div>
+                    <!-- CONTADOR DESTACADO Y EN NEGRITA -->
+                    <div class="invite-box p-6 mb-8 text-center bg-sky-50 border-sky-200">
+                        <p class="font-elegant text-lg tx-muted mb-2">Hasta ahora, han confirmado:</p>
+                        <p class="font-display font-bold tx-dark mb-2" style="font-size: 3.5rem; line-height: 1.2;">
+                            <span id="c-yes" class="text-sky-600">0</span> <span class="text-sky-800">personas</span> 💙
+                        </p>
                     </div>
 
                     <!-- ACCESO ADMINISTRADOR (DISCRETO) -->
                     <div class="text-center mt-12 pb-8">
-                        <button onclick="openAdminLogin()" class="text-xs tx-muted opacity-50 hover:opacity-100 transition-opacity underline">
+                        <button onclick="openAdminLogin()" class="text-xs tx-muted opacity-40 hover:opacity-100 transition-opacity underline">
                             Acceso Administrador
                         </button>
                     </div>
@@ -307,10 +279,9 @@
         // =============================================
 
         const PHOTO_URL = "https://1drv.ms/i/c/6cc2f784eb96b5ce/IQBVp7bbpM80TYC8XJBZvo0TAVCrRlsSbSIH5Ux6lWMPdpU?e=F09Yce";
-        const VIDEO_URL = "https://youtube.com/shorts/m6Z5Fx465Vw?si=HmY7u0ntP3Xp_qHy";
 
         const AU='admin', AP='admin'; 
-        let auth=false, pending=null, fxLock=false;
+        let auth=false, pending=null;
         let currentAtt = null;
         let currentPax = 1;
         let currentGuestName = "";
@@ -351,22 +322,6 @@
             else { b.classList.remove('active'); m.classList.remove('has-photo'); }
         }
 
-        function renderHomeVideo() {
-            const url = VIDEO_URL;
-            const container = document.getElementById('home-video-container');
-            container.innerHTML = ''; 
-            if(url) {
-                const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|shorts\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-                const match = url.match(regExp);
-                if (match && match[2].length == 11) {
-                    const videoId = match[2];
-                    container.innerHTML = `<iframe src="https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&loop=1&playlist=${videoId}&controls=0&showinfo=0&modestbranding=1&rel=0&playsinline=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
-                } else {
-                    container.innerHTML = `<iframe src="${url}" frameborder="0" allowfullscreen></iframe>`;
-                }
-            }
-        }
-
         async function upAll() {
             const d = await fetchGuests(); 
             const y = d.filter(g => g.att === 'yes');
@@ -397,7 +352,6 @@
 
         async function submitRSVP(isNo = false) {
             if (!currentGuestName) {
-                // Si no hay nombre en la URL, pedírselo
                 const name = prompt("Por favor escribe tu nombre completo:");
                 if (!name) return;
                 currentGuestName = name;
@@ -489,7 +443,7 @@
                 </div>
             `;
             document.getElementById('float-modal').classList.add('on');
-            upAll(); // Carga la lista
+            upAll(); 
         }
 
         async function renderAdminGuests(d) {
@@ -609,14 +563,13 @@
         let tt=null;function toast(i,t,m){const e=document.getElementById('toast');document.getElementById('t-ico').textContent=i;document.getElementById('t-tit').textContent=t;document.getElementById('t-msg').textContent=m;e.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>e.classList.remove('show'),3000)}
 
         function makePetals(){const c=document.getElementById('petals'),cl=['#7dd3fc','#bae6fd','#e0f2fe','#38bdf8'];for(let i=0;i<12;i++){const p=document.createElement('div');p.className='petal';const s=6+Math.random()*10;p.style.cssText=`width:${s}px;height:${s}px;left:${Math.random()*100}%;background:${cl[i%cl.length]};animation:petal-fall ${8+Math.random()*8}s linear infinite;animation-delay:${Math.random()*10}s;opacity:${.2+Math.random()*.3}`;c.appendChild(p)}}
-        function openEnv(){document.getElementById('env-seal').classList.add('go');setTimeout(()=>document.getElementById('env-flap').classList.add('go'),300);setTimeout(()=>{document.getElementById('env-scene').classList.add('bye');setTimeout(()=>{document.getElementById('env-screen').style.display='none';document.getElementById('main-screen').classList.add('show');applyPhotoBg();renderHomeVideo();burstConfetti()},400)},700)}
+        function openEnv(){document.getElementById('env-seal').classList.add('go');setTimeout(()=>document.getElementById('env-flap').classList.add('go'),300);setTimeout(()=>{document.getElementById('env-scene').classList.add('bye');setTimeout(()=>{document.getElementById('env-screen').style.display='none';document.getElementById('main-screen').classList.add('show');applyPhotoBg();burstConfetti()},400)},700)}
         function burstConfetti(){const cl=['#0ea5e9','#38bdf8','#7dd3fc','#bae6fd','#0284c7'];for(let i=0;i<40;i++){const c=document.createElement('div');c.className='confetti';const s=4+Math.random()*6;c.style.cssText=`width:${s}px;height:${s*1.4}px;left:${Math.random()*100}%;background:${cl[i%cl.length]};border-radius:${Math.random()>.5?'50%':'2px'};animation:confetti-fall ${2+Math.random()*3}s linear forwards;animation-delay:${Math.random()*.8}s`;document.body.appendChild(c);setTimeout(()=>c.remove(),5000)}}
 
         document.addEventListener('DOMContentLoaded',function(){
             makePetals();
             upAll();
             applyPhotoBg();
-            renderHomeVideo();
             loadGuestName();
         });
     </script>
