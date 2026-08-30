@@ -291,20 +291,21 @@
         let currentPax = 1;
         let currentGuestName = "";
 
+        // ===== FUNCIONES NUBE =====
         async function fetchGuests() {
             try {
                 const res = await fetch(`${BIN_URL}/latest`, { headers: { 'X-Master-Key': API_KEY } });
                 const data = await res.json();
-                return data.record.invitados || [];
-            } catch (e) { return []; }
+                return data.record;
+            } catch (e) { return { invitados: [], oficial: [] }; }
         }
 
-        async function saveGuests(invitados) {
+        async function saveGuests(data) {
             try {
                 await fetch(BIN_URL, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json', 'X-Master-Key': API_KEY },
-                    body: JSON.stringify({ "invitados": invitados })
+                    body: JSON.stringify(data)
                 });
             } catch (e) {}
         }
@@ -328,7 +329,10 @@
         }
 
         async function upAll() {
-            const d = await fetchGuests(); 
+            const data = await fetchGuests(); 
+            const d = data.invitados || [];
+            const oficial = data.oficial || [];
+            
             const y = d.filter(g => g.att === 'yes');
             const n = d.filter(g => g.att === 'no');
             let totalYes = 0;
@@ -339,9 +343,10 @@
             document.getElementById('c-yes').textContent = totalYes;
             document.getElementById('c-no').textContent = totalNo;
             
-            if (auth) renderAdminGuests(d); 
+            if (auth) renderAdminGuests(d, oficial); 
         }
 
+        // ===== LÓGICA DE VALIDACIÓN Y CONFIRMACIÓN =====
         function confirmAttendance(status) {
             currentAtt = status;
             const paxText = document.getElementById('pax-text');
@@ -364,10 +369,47 @@
 
         async function submitRSVP() {
             if (!currentGuestName) {
-                // TEXTO SOLICITADO PARA CUANDO NO HAY URL PERSONALIZADA
-                const name = prompt("Por favor escriba su nombre y el de su acompañante:");
+                // TEXTO SOLICITADO
+                const name = prompt("Ponga 1 Nombre y 1 Apellido para ver si está invitado y confirme su asistencia:");
                 if (!name) return;
-                currentGuestName = name;
+                currentGuestName = name.trim();
+            }
+
+            const data = await fetchGuests();
+            const d = data.invitados || [];
+            const oficial = data.oficial || [];
+
+            // 1. Verificar si ya confirmó antes
+            const alreadyConfirmed = d.find(g => g.name.toLowerCase() === currentGuestName.toLowerCase());
+            if (alreadyConfirmed) {
+                showValidationError("Usted ya ha confirmado su asistencia anteriormente", `Ya registramos tu respuesta: ${alreadyConfirmed.att === 'yes' ? 'Asistirás' : 'No asistirás'} (${alreadyConfirmed.pax} pax).`);
+                return;
+            }
+
+            // 2. Verificar si está en la lista oficial de invitados
+            let foundInOfficial = false;
+            let officialGroupName = "";
+
+            if (oficial.length > 0) { // Solo validamos si el admin subió una lista
+                for (const group of oficial) {
+                    const groupLower = group.toLowerCase();
+                    const inputLower = currentGuestName.toLowerCase();
+                    
+                    // Extraer palabras clave del nombre del invitado (ej. "Juan Garcia" -> ["juan", "garcia"])
+                    const words = inputLower.split(' ').filter(w => w.length > 2);
+                    
+                    // Si alguna palabra clave está en el grupo oficial
+                    if (words.some(w => groupLower.includes(w))) {
+                        foundInOfficial = true;
+                        officialGroupName = group;
+                        break;
+                    }
+                }
+
+                if (!foundInOfficial) {
+                    showValidationError("Lo sentimos, no te encontramos en la lista oficial de invitados", "Por favor, verifica que hayas escrito tu nombre correctamente (1 nombre y 1 apellido). Si crees que es un error, comunícate con los organizadores.");
+                    return;
+                }
             }
 
             const pax = currentPax;
@@ -378,36 +420,56 @@
                 time: new Date().toLocaleString('es-MX')
             };
 
-            let d = await fetchGuests();
-            const ex = d.findIndex(g => g.name.toLowerCase() === currentGuestName.toLowerCase());
-            if (ex >= 0) { d[ex] = en; } 
-            else { d.push(en); }
+            d.push(en);
+            data.invitados = d;
             
-            await saveGuests(d);
+            await saveGuests(data);
             upAll();
             
             document.getElementById('pax-selector').classList.add('hidden');
             
             // VENTANA EMERGENTE DE AGRADECIMIENTO PERSONALIZADA
-            showThankYouModal(currentGuestName, currentAtt, pax);
+            showThankYouModal(currentGuestName, currentAtt, pax, officialGroupName);
         }
 
-        function showThankYouModal(name, att, pax) {
+        function showValidationError(title, msg) {
+            const b = document.getElementById('float-modal-body');
+            const m = document.getElementById('float-modal');
+            b.innerHTML = `
+                <div class="text-center px-4 py-6">
+                    <span class="text-5xl block mb-3">⚠️</span>
+                    <p class="font-display text-xl tx-dark mb-3">${title}</p>
+                    <p class="font-elegant text-base tx-muted mb-4">${msg}</p>
+                    <button onclick="closeFloatModal()" class="btn-g inline-flex items-center gap-2 px-6 py-3 text-white font-display font-semibold text-base mt-2">
+                        Entendido
+                    </button>
+                </div>
+            `;
+            m.classList.add('on');
+        }
+
+        function showThankYouModal(name, att, pax, groupName) {
             const b = document.getElementById('float-modal-body');
             const m = document.getElementById('float-modal');
             
+            let groupMsg = '';
+            if (groupName) {
+                groupMsg = `<p class="font-elegant text-base tx-muted mb-2">Usted sí está invitado y está en la invitación con:<br><span class="font-bold tx-dark">${groupName}</span></p>`;
+            }
+            
             let msg = '';
             if (att === 'yes') {
-                msg = `<p class="font-elegant text-lg tx-muted mb-2">Son <span class="font-bold text-sky-600">${pax}</span> persona${pax > 1 ? 's' : ''} en total.</p>`;
+                msg = `<p class="font-elegant text-lg tx-muted mt-2">Son <span class="font-bold text-sky-600">${pax}</span> persona${pax > 1 ? 's' : ''} confirmada${pax > 1 ? 's' : ''}.</p>`;
             } else {
-                msg = `<p class="font-elegant text-lg tx-muted mb-2">Lamentamos que <span class="font-bold text-red-500">${pax}</span> persona${pax > 1 ? 's' : ''} no puedan asistir.</p>`;
+                msg = `<p class="font-elegant text-lg tx-muted mt-2">Lamentamos que <span class="font-bold text-red-500">${pax}</span> persona${pax > 1 ? 's' : ''} no puedan asistir.</p>`;
             }
             
             b.innerHTML = `
                 <div class="text-center px-4 py-6">
                     <span class="text-5xl block mb-3">${att === 'yes' ? '💙' : '🙏'}</span>
                     <p class="font-script text-3xl tx-dark mb-2">${name}</p>
-                    <p class="font-display text-xl tx-dark mb-4">¡Gracias por confirmar!</p>
+                    <p class="font-display text-xl tx-dark mb-2">¡Gracias por confirmar!</p>
+                    ${groupMsg}
                     ${msg}
                     <button onclick="closeFloatModal()" class="btn-g inline-flex items-center gap-2 px-6 py-3 text-white font-display font-semibold text-base mt-4">
                         Cerrar
@@ -417,6 +479,7 @@
             m.classList.add('on');
         }
 
+        // ===== ADMINISTRACIÓN =====
         function openAdminLogin() {
             const b = document.getElementById('float-modal-body');
             b.innerHTML = `
@@ -450,6 +513,7 @@
                         <p class="font-script text-3xl tx-dark">Panel Admin</p>
                         <button onclick="closeFloatModal()" class="text-sm tx-muted underline">Cerrar</button>
                     </div>
+
                     <div class="bg-sky-50 rounded-2xl p-4 border border-sky-200 mb-4">
                         <div class="flex items-center gap-2 mb-2"><span>🔗</span><p class="font-display font-bold text-base tx-dark">Generar Link Personal</p></div>
                         <div class="flex gap-2 mb-2">
@@ -463,10 +527,19 @@
                             </div>
                         </div>
                     </div>
+
+                    <div class="bg-white rounded-2xl p-4 border border-gray-200 mb-4">
+                        <p class="font-display font-bold text-base tx-dark mb-2">Lista Oficial de Invitados</p>
+                        <p class="text-xs tx-muted mb-2">Escribe cada familia o grupo de invitados en una línea. Ej: "Juan Garcia y Evelyn Castro"</p>
+                        <textarea id="oficial-list" rows="4" class="inp w-full px-3 py-2 text-sm mb-2" placeholder="Juan Garcia y Evelyn Castro&#10;Manuel Romero y Dayanna Leon"></textarea>
+                        <button onclick="saveOfficialList()" class="btn-g w-full py-2 text-white text-sm rounded-xl">Guardar Lista Oficial</button>
+                    </div>
+
                     <div class="bg-white rounded-2xl p-4 border border-gray-200 mb-4">
                         <p class="font-display font-bold text-base tx-dark mb-2">Lista de Confirmaciones</p>
-                        <div id="admin-g-list" class="space-y-2 max-h-[40vh] overflow-y-auto scroll-area"></div>
+                        <div id="admin-g-list" class="space-y-2 max-h-[30vh] overflow-y-auto scroll-area"></div>
                     </div>
+                    
                     <div class="flex gap-2">
                         <button onclick="expPDF()" class="btn-g flex-1 py-2 text-white text-sm rounded-xl">📄 PDF</button>
                         <button onclick="expCSV()" class="btn-g flex-1 py-2 text-white text-sm rounded-xl">📥 Excel</button>
@@ -478,8 +551,23 @@
             upAll(); 
         }
 
-        async function renderAdminGuests(d) {
+        async function saveOfficialList() {
+            const text = document.getElementById('oficial-list').value;
+            const list = text.split('\n').map(s => s.trim()).filter(s => s.length > 0);
+            const data = await fetchGuests();
+            data.oficial = list;
+            await saveGuests(data);
+            toast('✅', 'Lista Oficial Guardada', '');
+        }
+
+        async function renderAdminGuests(d, oficial) {
             const l = document.getElementById('admin-g-list');
+            const txtArea = document.getElementById('oficial-list');
+            
+            if (txtArea && oficial) {
+                txtArea.value = oficial.join('\n');
+            }
+            
             if(!l) return;
             if(!d.length){ l.innerHTML = `<p class="text-center tx-muted text-sm py-4">Sin registros</p>`; return; }
             l.innerHTML = d.map((g)=>{
@@ -495,24 +583,28 @@
         }
 
         async function delGuest(name, time) {
-            let d = await fetchGuests();
+            const data = await fetchGuests();
+            const d = data.invitados || [];
             const ri = d.findIndex(g => g.name === name && g.time === time);
             if(ri < 0) return;
             d.splice(ri, 1);
-            await saveGuests(d);
+            data.invitados = d;
+            await saveGuests(data);
             upAll();
             toast('🗑️', 'Eliminado', '');
         }
 
         async function clrAll() {
-            if((await fetchGuests()).length === 0) return;
+            const data = await fetchGuests();
+            if((data.invitados || []).length === 0) return;
             pending = async () => {
-                await saveGuests([]);
+                data.invitados = [];
+                await saveGuests(data);
                 upAll();
                 toast('🗑️', 'Todo borrado', '');
             };
             closeFloatModal();
-            document.getElementById('mod-t').textContent='Eliminar TODOS los registros?';
+            document.getElementById('mod-t').textContent='Eliminar TODOS los registros de confirmación?';
             document.getElementById('mod-c').classList.add('on');
         }
 
@@ -535,7 +627,8 @@
         }
 
         async function expPDF() {
-            const d = await fetchGuests();
+            const data = await fetchGuests();
+            const d = data.invitados || [];
             if(!d.length){ toast('⚠️','Sin datos',''); return; }
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
@@ -565,7 +658,8 @@
         }
 
         async function expCSV() {
-            const d = await fetchGuests();
+            const data = await fetchGuests();
+            const d = data.invitados || [];
             if(!d.length){ toast('⚠️','Sin datos',''); return; }
             let c='Nombre,Asistencia,Personas,Fecha\n';
             d.forEach(g=>{ c+=`"${g.name}","${g.att==='yes'?'Si':'No'}","${g.pax||1}","${g.time||''}"\n` });
