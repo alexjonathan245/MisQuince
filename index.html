@@ -148,7 +148,6 @@
                 <div class="flex items-center justify-center gap-1.5 mb-3">
                     <span class="text-5xl crown-tilt inline-block glow">👑</span>
                 </div>
-                <!-- TÍTULO CORREGIDO -->
                 <h1 class="font-script text-4xl shimmer leading-tight">Gaby te invita a celebrar sus XV años</h1>
             </div>
         </header>
@@ -368,21 +367,35 @@
             document.getElementById('pax-count').textContent = currentPax;
         }
 
-        // Función auxiliar para extraer nombres y buscar coincidencias
+        // Función auxiliar mejorada para encontrar el grupo familiar exacto
         function findOfficialGroup(name, oficial) {
-            const inputLower = name.toLowerCase();
+            const inputLower = name.toLowerCase().trim();
             const words = inputLower.split(' ').filter(w => w.length > 2);
+
             if (words.length < 2) return null;
 
             for (const group of oficial) {
                 const groupLower = group.toLowerCase();
-                // Si el nombre exacto escrito está en el grupo
+                
+                // 1. Coincidencia exacta del nombre completo escrito
                 if (groupLower.includes(inputLower)) {
                     return group;
                 }
-                // Si alguna palabra clave del nombre está en el grupo
-                if (words.some(w => groupLower.includes(w))) {
+                
+                // 2. Tomar las dos primeras palabras (Nombre + Apellido) y buscarlas juntas
+                // Ej: "Carlos Criollo" se busca exactamente así en la lista.
+                const firstTwoWords = words.slice(0, 2).join(' ');
+                if (groupLower.includes(firstTwoWords)) {
                     return group;
+                }
+                
+                // 3. Tomar la primera y la última palabra (por si tiene segundo nombre)
+                // Ej: "Juan Carlos Criollo" -> buscar "Juan Criollo" o "Carlos Criollo"
+                if (words.length >= 3) {
+                    const firstLastWords = `${words[0]} ${words[words.length - 1]}`;
+                    if (groupLower.includes(firstLastWords)) {
+                        return group;
+                    }
                 }
             }
             return null;
@@ -423,6 +436,7 @@
             if (officialGroupName) {
                 for (const g of d) {
                     const groupOfRegistered = findOfficialGroup(g.name, oficial);
+                    // Si el grupo familiar del que ya registró es el mismo que el del que intenta registrar ahora
                     if (groupOfRegistered && groupOfRegistered === officialGroupName) {
                         alreadyConfirmed = g;
                         break;
@@ -433,7 +447,7 @@
                 alreadyConfirmed = d.find(g => g.name.toLowerCase() === inputLower);
             }
 
-            // Si ya confirmó alguien de su grupo, mostramos el mensaje y detemos el registro
+            // Si ya confirmó alguien de su grupo, mostramos el mensaje y detenemos el registro para no duplicar
             if (alreadyConfirmed) {
                 showAlreadyConfirmedModal(alreadyConfirmed, officialGroupName);
                 return;
@@ -591,8 +605,8 @@
 
                     <div class="bg-white rounded-2xl p-4 border border-gray-200 mb-4">
                         <p class="font-display font-bold text-base tx-dark mb-2">Lista Oficial de Invitados</p>
-                        <p class="text-xs tx-muted mb-2">Escribe cada familia o grupo de invitados en una línea. Ej: "Andres Mendoza y Esposa e hijo"</p>
-                        <textarea id="oficial-list" rows="4" class="inp w-full px-3 py-2 text-sm mb-2" placeholder="Andres Mendoza y Esposa e hijo&#10;Jonathan Criollo y Esposa"></textarea>
+                        <p class="text-xs tx-muted mb-2">Escribe cada familia o grupo de invitados en una línea. Ej: "Luis Garcia y Esposa (Ginger Zambrano)"</p>
+                        <textarea id="oficial-list" rows="4" class="inp w-full px-3 py-2 text-sm mb-2" placeholder="Luis Garcia y Esposa (Ginger Zambrano)&#10;Jonathan Criollo y Esposa (Ingrid Montes)&#10;Carlos Criollo"></textarea>
                         <button onclick="saveOfficialList()" class="btn-g w-full py-2 text-white text-sm rounded-xl">Guardar Lista Oficial</button>
                     </div>
 
