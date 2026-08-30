@@ -147,11 +147,10 @@
 
         <header class="content-layer flex-shrink-0 px-4 pt-6 pb-2 relative z-20">
             <div class="max-w-lg mx-auto text-center">
-                <div class="flex items-center justify-center gap-1.5 mb-2">
-                    <span class="text-xl crown-tilt inline-block">👑</span>
-                    <span class="font-script text-3xl tx-dark">XV Años</span>
+                <!-- CORONA SOLA SIN TEXTO XV AÑOS -->
+                <div class="flex items-center justify-center gap-1.5 mb-3">
+                    <span class="text-5xl crown-tilt inline-block glow">👑</span>
                 </div>
-                <!-- TÍTULO SOLICITADO -->
                 <h1 class="font-script text-4xl shimmer leading-tight">Te invito a celebrar mis XV años</h1>
             </div>
         </header>
@@ -240,11 +239,18 @@
                         </div>
                     </div>
 
-                    <!-- CONTADOR DESTACADO Y EN NEGRITA -->
+                    <!-- CONTADORES DESTACADOS -->
                     <div class="invite-box p-6 mb-8 text-center bg-sky-50 border-sky-200">
                         <p class="font-elegant text-lg tx-muted mb-2">Hasta ahora, han confirmado:</p>
-                        <p class="font-display font-bold tx-dark mb-2" style="font-size: 3.5rem; line-height: 1.2;">
+                        <p class="font-display font-bold tx-dark mb-4" style="font-size: 3.5rem; line-height: 1.2;">
                             <span id="c-yes" class="text-sky-600">0</span> <span class="text-sky-800">personas</span> 💙
+                        </p>
+                        
+                        <div class="h-px w-24 bg-sky-200 mx-auto my-3"></div>
+                        
+                        <p class="font-elegant text-base tx-muted mb-1">No podrán asistir:</p>
+                        <p class="font-display font-bold text-red-600" style="font-size: 2.5rem; line-height: 1.2;">
+                            <span id="c-no">0</span> <span class="text-red-700">personas</span> 💔
                         </p>
                     </div>
 
@@ -325,10 +331,13 @@
         async function upAll() {
             const d = await fetchGuests(); 
             const y = d.filter(g => g.att === 'yes');
+            const n = d.filter(g => g.att === 'no');
             let totalPax = 0;
             y.forEach(g => { totalPax += (g.pax || 1); });
             
             document.getElementById('c-yes').textContent = totalPax;
+            document.getElementById('c-no').textContent = n.length;
+            
             if (auth) renderAdminGuests(d); 
         }
 
