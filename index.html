@@ -148,7 +148,8 @@
                 <div class="flex items-center justify-center gap-1.5 mb-3">
                     <span class="text-5xl crown-tilt inline-block glow">👑</span>
                 </div>
-                <h1 class="font-script text-4xl shimmer leading-tight">Te invito a celebrar mis XV años</h1>
+                <!-- TÍTULO CORREGIDO -->
+                <h1 class="font-script text-4xl shimmer leading-tight">Gaby te invita a celebrar sus XV años</h1>
             </div>
         </header>
 
@@ -367,6 +368,26 @@
             document.getElementById('pax-count').textContent = currentPax;
         }
 
+        // Función auxiliar para extraer nombres y buscar coincidencias
+        function findOfficialGroup(name, oficial) {
+            const inputLower = name.toLowerCase();
+            const words = inputLower.split(' ').filter(w => w.length > 2);
+            if (words.length < 2) return null;
+
+            for (const group of oficial) {
+                const groupLower = group.toLowerCase();
+                // Si el nombre exacto escrito está en el grupo
+                if (groupLower.includes(inputLower)) {
+                    return group;
+                }
+                // Si alguna palabra clave del nombre está en el grupo
+                if (words.some(w => groupLower.includes(w))) {
+                    return group;
+                }
+            }
+            return null;
+        }
+
         async function submitRSVP() {
             if (!currentGuestName) {
                 const name = prompt("Ponga 1 Nombre y 1 Apellido para ver si está invitado y confirme su asistencia:");
@@ -378,51 +399,47 @@
             const d = data.invitados || [];
             const oficial = data.oficial || [];
 
-            // 1. Verificar si ya confirmó antes
-            const alreadyConfirmed = d.find(g => g.name.toLowerCase() === currentGuestName.toLowerCase());
-            if (alreadyConfirmed) {
-                let officialGroupName = "";
-                if (oficial.length > 0) {
-                    const inputLower = currentGuestName.toLowerCase();
-                    for (const group of oficial) {
-                        if (group.toLowerCase().includes(inputLower)) {
-                            officialGroupName = group;
-                            break;
-                        }
+            const inputLower = currentGuestName.toLowerCase();
+            const words = inputLower.split(' ').filter(w => w.length > 2);
+
+            if (words.length < 2) {
+                showValidationError("Faltan datos", "Por favor escribe tu Nombre y un Apellido para poder buscarte en la lista.");
+                return;
+            }
+
+            // 1. Buscar a qué grupo oficial pertenece la persona que se está registrando
+            let officialGroupName = "";
+            if (oficial.length > 0) {
+                const groupFound = findOfficialGroup(currentGuestName, oficial);
+                if (!groupFound) {
+                    showValidationError("Lo sentimos, no te encontramos en la lista oficial de invitados", "Por favor, verifica que hayas escrito tu nombre y apellido correctamente. Si crees que es un error, comunícate con los organizadores.");
+                    return;
+                }
+                officialGroupName = groupFound;
+            }
+
+            // 2. Verificar si ALGUIEN DE SU MISMO GRUPO FAMILIAR ya confirmó
+            let alreadyConfirmed = null;
+            if (officialGroupName) {
+                for (const g of d) {
+                    const groupOfRegistered = findOfficialGroup(g.name, oficial);
+                    if (groupOfRegistered && groupOfRegistered === officialGroupName) {
+                        alreadyConfirmed = g;
+                        break;
                     }
                 }
+            } else {
+                // Si no hay lista oficial, solo verificamos por nombre exacto
+                alreadyConfirmed = d.find(g => g.name.toLowerCase() === inputLower);
+            }
+
+            // Si ya confirmó alguien de su grupo, mostramos el mensaje y detemos el registro
+            if (alreadyConfirmed) {
                 showAlreadyConfirmedModal(alreadyConfirmed, officialGroupName);
                 return;
             }
 
-            // 2. Verificar si está en la lista oficial de invitados
-            let foundInOfficial = false;
-            let officialGroupName = "";
-
-            if (oficial.length > 0) { // Solo validamos si el admin subió una lista
-                const inputLower = currentGuestName.toLowerCase();
-                const words = inputLower.split(' ').filter(w => w.length > 2);
-
-                if (words.length < 2) {
-                    showValidationError("Faltan datos", "Por favor escribe tu Nombre y un Apellido para poder buscarte en la lista.");
-                    return;
-                }
-
-                for (const group of oficial) {
-                    const groupLower = group.toLowerCase();
-                    if (groupLower.includes(inputLower)) {
-                        foundInOfficial = true;
-                        officialGroupName = group;
-                        break;
-                    }
-                }
-
-                if (!foundInOfficial) {
-                    showValidationError("Lo sentimos, no te encontramos en la lista oficial de invitados", "Por favor, verifica que hayas escrito tu nombre y apellido correctamente. Si crees que es un error, comunícate con los organizadores.");
-                    return;
-                }
-            }
-
+            // 3. Si pasa todas las validaciones, se procede a registrar
             const pax = currentPax;
             const en = {
                 name: currentGuestName,
@@ -458,7 +475,6 @@
             m.classList.add('on');
         }
 
-        // NUEVA FUNCIÓN PARA EL MENSAJE DE "YA CONFIRMÓ"
         function showAlreadyConfirmedModal(guestData, groupName) {
             const b = document.getElementById('float-modal-body');
             const m = document.getElementById('float-modal');
@@ -575,8 +591,8 @@
 
                     <div class="bg-white rounded-2xl p-4 border border-gray-200 mb-4">
                         <p class="font-display font-bold text-base tx-dark mb-2">Lista Oficial de Invitados</p>
-                        <p class="text-xs tx-muted mb-2">Escribe cada familia o grupo de invitados en una línea. Ej: "Jonathan Criollo y Esposa (Ingrid Montes)"</p>
-                        <textarea id="oficial-list" rows="4" class="inp w-full px-3 py-2 text-sm mb-2" placeholder="Jonathan Criollo y Esposa (Ingrid Montes)&#10;Carlos Criollo"></textarea>
+                        <p class="text-xs tx-muted mb-2">Escribe cada familia o grupo de invitados en una línea. Ej: "Andres Mendoza y Esposa e hijo"</p>
+                        <textarea id="oficial-list" rows="4" class="inp w-full px-3 py-2 text-sm mb-2" placeholder="Andres Mendoza y Esposa e hijo&#10;Jonathan Criollo y Esposa"></textarea>
                         <button onclick="saveOfficialList()" class="btn-g w-full py-2 text-white text-sm rounded-xl">Guardar Lista Oficial</button>
                     </div>
 
