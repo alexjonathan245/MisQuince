@@ -222,8 +222,9 @@
                             </button>
                         </div>
 
+                        <!-- SELECTOR DE CANTIDAD DE PERSONAS (AHORA PARA AMBAS OPCIONES) -->
                         <div id="pax-selector" class="hidden mt-5 pt-5 border-t border-sky-100">
-                            <p class="text-center font-elegant text-base tx-muted mb-3">¿Cuántas personas asistirán en total? (Incluyéndote)</p>
+                            <p id="pax-text" class="text-center font-elegant text-base tx-muted mb-3">¿Cuántas personas asistirán en total? (Incluyéndote)</p>
                             <div class="flex items-center justify-center gap-4 mb-4">
                                 <button onclick="changePax(-1)" class="w-12 h-12 rounded-full bg-sky-100 text-sky-700 text-2xl font-bold flex items-center justify-center">-</button>
                                 <span id="pax-count" class="font-display text-4xl font-bold tx-dark w-12 text-center">1</span>
@@ -332,11 +333,13 @@
             const d = await fetchGuests(); 
             const y = d.filter(g => g.att === 'yes');
             const n = d.filter(g => g.att === 'no');
-            let totalPax = 0;
-            y.forEach(g => { totalPax += (g.pax || 1); });
+            let totalYes = 0;
+            let totalNo = 0;
+            y.forEach(g => { totalYes += (g.pax || 1); });
+            n.forEach(g => { totalNo += (g.pax || 1); }); // Sumamos los pax de los que no van
             
-            document.getElementById('c-yes').textContent = totalPax;
-            document.getElementById('c-no').textContent = n.length;
+            document.getElementById('c-yes').textContent = totalYes;
+            document.getElementById('c-no').textContent = totalNo;
             
             if (auth) renderAdminGuests(d); 
         }
@@ -344,14 +347,20 @@
         // ===== LÓGICA DE CONFIRMACIÓN DEL INVITADO =====
         function confirmAttendance(status) {
             currentAtt = status;
+            const paxText = document.getElementById('pax-text');
+            
+            // Cambiamos el texto dependiendo de la opción seleccionada
             if (status === 'yes') {
-                document.getElementById('pax-selector').classList.remove('hidden');
-                document.getElementById('rsvp-thanks').classList.add('hidden');
-                currentPax = 1;
-                document.getElementById('pax-count').textContent = currentPax;
+                paxText.innerText = '¿Cuántas personas asistirán en total? (Incluyéndote)';
             } else {
-                submitRSVP(true); // Si es no, envía directo con 0 pax
+                paxText.innerText = '¿Cuántas personas no podrán asistir en total? (Incluyéndote)';
             }
+            
+            // Mostramos el selector en ambos casos
+            document.getElementById('pax-selector').classList.remove('hidden');
+            document.getElementById('rsvp-thanks').classList.add('hidden');
+            currentPax = 1;
+            document.getElementById('pax-count').textContent = currentPax;
         }
 
         function changePax(val) {
@@ -359,14 +368,14 @@
             document.getElementById('pax-count').textContent = currentPax;
         }
 
-        async function submitRSVP(isNo = false) {
+        async function submitRSVP() {
             if (!currentGuestName) {
                 const name = prompt("Por favor escribe tu nombre completo:");
                 if (!name) return;
                 currentGuestName = name;
             }
 
-            const pax = isNo ? 0 : currentPax;
+            const pax = currentPax; // Obtenemos la cantidad seleccionada
             const en = {
                 name: currentGuestName,
                 att: currentAtt,
@@ -464,7 +473,7 @@
                 return `<div class="bg-gray-50 p-2 rounded-lg text-sm flex justify-between items-center">
                     <div>
                         <p class="font-bold tx-dark">${g.name}</p>
-                        <p class="text-xs ${y?'text-green-600':'text-red-500'}">${y ? `Asiste (${g.pax||1} pax)` : 'No asiste'}</p>
+                        <p class="text-xs ${y?'text-green-600':'text-red-500'}">${y ? `Asiste (${g.pax||1} pax)` : `No asiste (${g.pax||1} pax)`}</p>
                     </div>
                     <button onclick="delGuest('${g.name}','${g.time}')" class="text-red-400 hover:text-red-600 text-xs">✕</button>
                 </div>`;
@@ -528,7 +537,7 @@
             doc.setTextColor(50);
             d.forEach((g, i) => {
                 if (y > 270) { doc.addPage(); y = 20; }
-                const status = g.att === 'yes' ? `ASISTIRÁ (${g.pax||1} pax)` : 'NO ASISTIRÁ';
+                const status = g.att === 'yes' ? `ASISTIRÁ (${g.pax||1} pax)` : `NO ASISTIRÁ (${g.pax||1} pax)`;
                 doc.setTextColor(g.att === 'yes' ? 0 : 200, g.att === 'yes' ? 150 : 0, 0);
                 doc.text(`${i + 1}. ${g.name} (${status})`, 20, y);
                 y += 7;
