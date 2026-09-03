@@ -94,12 +94,6 @@
         .btn-g:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(2,132,199,.3)}
         .btn-g:active{transform:scale(.98)}
         .btn-g:disabled{opacity:0.6;cursor:not-allowed;transform:scale(1)}
-        
-        .btn-attend { transition: all 0.3s; border-radius: 16px; font-family: 'Playfair Display', serif; }
-        .btn-yes { background: linear-gradient(135deg, #38bdf8, #0284c7); color: white; box-shadow: 0 4px 15px rgba(14,165,233,.3); }
-        .btn-yes:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(14,165,233,.4); }
-        .btn-no { background: white; color: #64748b; border: 2px solid #cbd5e1; }
-        .btn-no:hover { transform: translateY(-2px); background: #f8fafc; border-color: #94a3b8; }
 
         .toast-c{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(80px);z-index:9999;transition:all .4s cubic-bezier(.68,-.55,.265,1.55);opacity:0;pointer-events:none}
         .toast-c.show{transform:translateX(-50%) translateY(0);opacity:1;pointer-events:all}
@@ -216,7 +210,7 @@
                         <p class="font-elegant text-lg tx-muted mb-1">A las</p>
                         <p class="font-display text-2xl font-bold tx-dark mb-4">8:00 PM</p>
 
-                        <!-- CUENTA REGRESIVA -->
+                        <!-- CUENTA REGRESIVA ARREGLADA -->
                         <div id="countdown" class="grid grid-cols-4 gap-2 mt-4 mb-4">
                             <div class="bg-sky-100 p-2 rounded-xl">
                                 <span id="cd-days" class="font-display text-3xl font-bold text-sky-800 block">0</span>
@@ -266,62 +260,6 @@
                         </button>
                     </div>
 
-                    <!-- CONFIRMACIÓN DE ASISTENCIA -->
-                    <div class="invite-box p-6 mb-5 reveal">
-                        <div class="text-center mb-4">
-                            <p class="font-elegant text-lg tx-muted mb-1">Por favor confirma tu asistencia</p>
-                            <p class="font-display text-sm tx-muted">Selecciona una opción</p>
-                        </div>
-                        
-                        <div class="grid grid-cols-2 gap-3">
-                            <button onclick="confirmAttendance('yes')" class="btn-attend btn-yes py-4 font-bold text-lg flex flex-col items-center gap-1">
-                                <span class="text-2xl">✅</span>
-                                <span>Sí, asistiré</span>
-                            </button>
-                            <button onclick="confirmAttendance('no')" class="btn-attend btn-no py-4 font-bold text-lg flex flex-col items-center gap-1">
-                                <span class="text-2xl">❌</span>
-                                <span>No podré</span>
-                            </button>
-                        </div>
-
-                        <div id="pax-selector" class="hidden mt-5 pt-5 border-t border-sky-100">
-                            
-                            <!-- CAMPO DE TEXTO PARA NOMBRE -->
-                            <div id="name-input-section" class="hidden mb-5 pb-4 border-b border-sky-100">
-                                <p class="text-center font-elegant text-base tx-muted mb-3">Ponga 1 Nombre y 1 Apellido para verificar su invitación:</p>
-                                <input type="text" id="manual-guest-name" class="inp w-full px-4 py-3 text-center mb-3" placeholder="Ej: Carlos Criollo">
-                            </div>
-
-                            <!-- SELECTOR DE ADULTOS Y NIÑOS -->
-                            <div id="attend-details" class="hidden mb-5">
-                                <div class="grid grid-cols-2 gap-4 text-center">
-                                    <div>
-                                        <p class="font-elegant text-base tx-muted mb-2 font-bold">Adultos</p>
-                                        <p class="text-xs tx-muted mb-2">(Incluyéndote)</p>
-                                        <div class="flex items-center justify-center gap-3">
-                                            <button onclick="changePax('adults', -1)" class="w-10 h-10 rounded-full bg-sky-100 text-sky-700 text-xl font-bold flex items-center justify-center">-</button>
-                                            <span id="pax-adults" class="font-display text-3xl font-bold tx-dark w-10 text-center">1</span>
-                                            <button onclick="changePax('adults', 1)" class="w-10 h-10 rounded-full bg-sky-100 text-sky-700 text-xl font-bold flex items-center justify-center">+</button>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <p class="font-elegant text-base tx-muted mb-2 font-bold">Niños</p>
-                                        <p class="text-xs tx-muted mb-2">(Si no llevas, pon 0)</p>
-                                        <div class="flex items-center justify-center gap-3">
-                                            <button onclick="changePax('kids', -1)" class="w-10 h-10 rounded-full bg-sky-100 text-sky-700 text-xl font-bold flex items-center justify-center">-</button>
-                                            <span id="pax-kids" class="font-display text-3xl font-bold tx-dark w-10 text-center">0</span>
-                                            <button onclick="changePax('kids', 1)" class="w-10 h-10 rounded-full bg-sky-100 text-sky-700 text-xl font-bold flex items-center justify-center">+</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <button id="submit-rsvp-btn" onclick="submitRSVP()" class="btn-g w-full py-3 text-white font-display font-bold text-base tracking-wider flex items-center justify-center gap-2">
-                                Confirmar <span>👑</span>
-                            </button>
-                        </div>
-                    </div>
-
                     <!-- CONTADORES DESTACADOS CON SKELETON LOADER -->
                     <div class="invite-box p-6 mb-8 text-center bg-sky-50 border-sky-200 reveal">
                         <p class="font-elegant text-lg tx-muted mb-2">Personas confirmadas:</p>
@@ -338,8 +276,8 @@
                         
                         <!-- BOTÓN ELIMINAR INVITACIÓN -->
                         <div class="mt-6 pt-4 border-t border-sky-100">
-                            <button onclick="openCancelInvitationModal()" class="text-sm text-red-500 hover:text-red-700 font-display font-semibold transition-colors underline">
-                                No voy a asistir, eliminar mi invitación
+                            <button onclick="openCancelInvitationModal()" class="bg-red-50 border-2 border-red-200 text-red-600 hover:bg-red-100 font-display font-bold py-3 px-6 rounded-full text-sm transition-all flex items-center justify-center gap-2 mx-auto shadow-sm hover:shadow-md">
+                                💔 No voy a asistir, eliminar mi invitación
                             </button>
                         </div>
                     </div>
@@ -375,8 +313,6 @@
 
         const AU='admin', AP='Gaby2024!'; 
         let auth=false, pending=null;
-        let currentAtt = null;
-        let currentPax = { adults: 1, kids: 0 };
         let currentGuestName = "";
 
         // ===== FUNCIONES NUBE =====
@@ -584,39 +520,6 @@
             toast('💔', 'Invitación Eliminada', 'Gracias por avisarnos.');
         }
 
-        // ===== LÓGICA DE CONFIRMACIÓN =====
-        function confirmAttendance(status) {
-            currentAtt = status;
-            
-            document.getElementById('pax-selector').classList.remove('hidden');
-            
-            if (!currentGuestName) {
-                document.getElementById('name-input-section').classList.remove('hidden');
-            } else {
-                document.getElementById('name-input-section').classList.add('hidden');
-            }
-            
-            if (status === 'yes') {
-                document.getElementById('attend-details').classList.remove('hidden');
-                currentPax = { adults: 1, kids: 0 };
-                document.getElementById('pax-adults').textContent = 1;
-                document.getElementById('pax-kids').textContent = 0;
-            } else {
-                document.getElementById('attend-details').classList.add('hidden');
-                currentPax = { adults: 0, kids: 0 };
-            }
-        }
-
-        function changePax(type, val) {
-            if (type === 'adults') {
-                currentPax.adults = Math.max(1, currentPax.adults + val);
-                document.getElementById('pax-adults').textContent = currentPax.adults;
-            } else {
-                currentPax.kids = Math.max(0, currentPax.kids + val);
-                document.getElementById('pax-kids').textContent = currentPax.kids;
-            }
-        }
-
         function normalizeStr(s) {
             return s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
         }
@@ -644,174 +547,6 @@
                 }
             }
             return null;
-        }
-
-        async function submitRSVP() {
-            const submitBtn = document.getElementById('submit-rsvp-btn');
-            submitBtn.disabled = true;
-            submitBtn.innerHTML = 'Enviando... <span>⏳</span>';
-
-            if (!currentGuestName) {
-                const nameInput = document.getElementById('manual-guest-name').value.trim();
-                if (!nameInput) {
-                    toast('⚠️', 'Falta nombre', 'Por favor escribe tu nombre para continuar.');
-                    submitBtn.disabled = false;
-                    submitBtn.innerHTML = 'Confirmar <span>👑</span>';
-                    return;
-                }
-                currentGuestName = nameInput;
-            }
-
-            const data = await fetchGuests();
-            const d = data.invitados || [];
-            const oficial = data.oficial || [];
-
-            const inputNorm = normalizeStr(currentGuestName);
-            const words = inputNorm.split(' ').filter(w => w.length > 2);
-
-            if (words.length < 2) {
-                showValidationError("Faltan datos", "Por favor escribe tu Nombre y un Apellido para poder buscarte en la lista.");
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = 'Confirmar <span>👑</span>';
-                return;
-            }
-
-            let officialGroupName = "";
-            if (oficial.length > 0) {
-                const groupFound = findOfficialGroup(currentGuestName, oficial);
-                if (!groupFound) {
-                    showValidationError("Lo sentimos, no te encontramos en la lista oficial de invitados", "Por favor, verifica que hayas escrito tu nombre y apellido correctamente. Si crees que es un error, comunícate con los organizadores.");
-                    submitBtn.disabled = false;
-                    submitBtn.innerHTML = 'Confirmar <span>👑</span>';
-                    return;
-                }
-                officialGroupName = groupFound;
-            }
-
-            let alreadyConfirmed = null;
-            if (officialGroupName) {
-                for (const g of d) {
-                    const groupOfRegistered = findOfficialGroup(g.name, oficial);
-                    if (groupOfRegistered && groupOfRegistered === officialGroupName) {
-                        alreadyConfirmed = g;
-                        break;
-                    }
-                }
-            } else {
-                alreadyConfirmed = d.find(g => normalizeStr(g.name) === inputNorm);
-            }
-
-            if (alreadyConfirmed) {
-                showAlreadyConfirmedModal(alreadyConfirmed, officialGroupName);
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = 'Confirmar <span>👑</span>';
-                return;
-            }
-
-            const totalPax = currentAtt === 'yes' ? (currentPax.adults + currentPax.kids) : 1;
-            
-            const en = {
-                name: currentGuestName,
-                att: currentAtt,
-                pax: totalPax,
-                adults: currentAtt === 'yes' ? currentPax.adults : 0,
-                kids: currentAtt === 'yes' ? currentPax.kids : 0,
-                time: new Date().toLocaleString('es-MX')
-            };
-
-            d.push(en);
-            data.invitados = d;
-            
-            await saveGuests(data);
-            upAll();
-            
-            document.getElementById('pax-selector').classList.add('hidden');
-            
-            showThankYouModal(currentGuestName, currentAtt, totalPax, officialGroupName);
-            
-            submitBtn.disabled = false;
-            submitBtn.innerHTML = 'Confirmar <span>👑</span>';
-        }
-
-        function showValidationError(title, msg) {
-            const b = document.getElementById('float-modal-body');
-            const m = document.getElementById('float-modal');
-            b.innerHTML = `
-                <div class="text-center px-4 py-6">
-                    <span class="text-5xl block mb-3">⚠️</span>
-                    <p class="font-display text-xl tx-dark mb-3">${title}</p>
-                    <p class="font-elegant text-base tx-muted mb-4">${msg}</p>
-                    <button onclick="closeFloatModal()" class="btn-g inline-flex items-center gap-2 px-6 py-3 text-white font-display font-semibold text-base mt-2">
-                        Entendido
-                    </button>
-                </div>
-            `;
-            m.classList.add('on');
-        }
-
-        function showAlreadyConfirmedModal(guestData, groupName) {
-            const b = document.getElementById('float-modal-body');
-            const m = document.getElementById('float-modal');
-            
-            let groupMsg = '';
-            if (groupName) {
-                groupMsg = `<p class="font-elegant text-lg tx-muted mb-2">Usted sí está invitado y está en la invitación con:<br><span class="font-bold tx-dark">${groupName}</span></p>`;
-            } else {
-                groupMsg = `<p class="font-elegant text-lg tx-muted mb-2">Usted sí está invitado.</p>`;
-            }
-            
-            let statusMsg = '';
-            if (guestData.att === 'yes') {
-                statusMsg = `<p class="font-elegant text-base font-bold text-sky-700 mt-2">Ya han confirmado su asistencia (${guestData.pax} pax).</p>`;
-            } else {
-                statusMsg = `<p class="font-elegant text-base font-bold text-red-500 mt-2">Ya confirmaron que no asistirán.</p>`;
-            }
-            
-            b.innerHTML = `
-                <div class="text-center px-4 py-6">
-                    <span class="text-5xl block mb-3">💙</span>
-                    <p class="font-script text-3xl tx-dark mb-2">${guestData.name}</p>
-                    <p class="font-display text-xl tx-dark mb-2">¡Gracias por confirmar!</p>
-                    ${groupMsg}
-                    ${statusMsg}
-                    <p class="font-elegant text-sm tx-muted mt-3">No es necesario que vuelvas a registrarte.</p>
-                    <button onclick="closeFloatModal()" class="btn-g inline-flex items-center gap-2 px-6 py-3 text-white font-display font-semibold text-base mt-4">
-                        Cerrar
-                    </button>
-                </div>
-            `;
-            m.classList.add('on');
-        }
-
-        function showThankYouModal(name, att, pax, groupName) {
-            const b = document.getElementById('float-modal-body');
-            const m = document.getElementById('float-modal');
-            
-            let groupMsg = '';
-            if (groupName) {
-                groupMsg = `<p class="font-elegant text-base tx-muted mb-2">Usted sí está invitado y está en la invitación con:<br><span class="font-bold tx-dark">${groupName}</span></p>`;
-            }
-            
-            let msg = '';
-            if (att === 'yes') {
-                msg = `<p class="font-elegant text-lg tx-muted mt-2">Son <span class="font-bold text-sky-600">${pax}</span> persona${pax > 1 ? 's' : ''} confirmada${pax > 1 ? 's' : ''}.</p>`;
-            } else {
-                msg = `<p class="font-elegant text-lg tx-muted mt-2">Lamentamos que no puedas asistir. Gracias por avisarnos.</p>`;
-            }
-            
-            b.innerHTML = `
-                <div class="text-center px-4 py-6">
-                    <span class="text-5xl block mb-3">${att === 'yes' ? '💙' : '🙏'}</span>
-                    <p class="font-script text-3xl tx-dark mb-2">${name}</p>
-                    <p class="font-display text-xl tx-dark mb-2">¡Gracias por confirmar!</p>
-                    ${groupMsg}
-                    ${msg}
-                    <button onclick="closeFloatModal()" class="btn-g inline-flex items-center gap-2 px-6 py-3 text-white font-display font-semibold text-base mt-4">
-                        Cerrar
-                    </button>
-                </div>
-            `;
-            m.classList.add('on');
         }
 
         // ===== ADMINISTRACIÓN =====
@@ -1065,11 +800,13 @@
 
         // ===== CUENTA REGRESIVA ARREGLADA =====
         function startCountdown() {
+            // Fecha exacta del evento: 17 de Octubre de 2024 a las 8:00 PM (20:00)
             const eventDate = new Date("October 17, 2024 20:00:00").getTime();
             const x = setInterval(function() {
                 const now = new Date().getTime();
                 const distance = eventDate - now;
                 
+                // Si la fecha ya pasó
                 if (distance < 0) {
                     clearInterval(x);
                     document.getElementById("cd-days").innerText = "0";
@@ -1079,11 +816,13 @@
                     return;
                 }
 
+                // Cálculo exacto
                 const days = Math.floor(distance / (1000 * 60 * 60 * 24));
                 const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
                 const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
                 const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
+                // Mostrar en pantalla
                 document.getElementById("cd-days").innerText = days;
                 document.getElementById("cd-hours").innerText = hours;
                 document.getElementById("cd-mins").innerText = minutes;
