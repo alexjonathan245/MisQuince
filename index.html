@@ -196,7 +196,7 @@
                         </div>
                     </div>
 
-                    <!-- DETALLES DEL EVENTO CON CUENTA REGRESIVA -->
+                    <!-- DETALLES DEL EVENTO -->
                     <div class="invite-box p-6 mb-5 soft-glow text-center reveal">
                         <p class="font-elegant text-lg tx-muted mb-2">Te esperamos el</p>
                         <p class="font-display text-3xl font-bold tx-dark mb-3">Sábado 17 de Octubre</p>
@@ -209,35 +209,46 @@
 
                         <p class="font-elegant text-lg tx-muted mb-1">A las</p>
                         <p class="font-display text-2xl font-bold tx-dark mb-4">8:00 PM</p>
+                    </div>
 
-                        <!-- CUENTA REGRESIVA ARREGLADA -->
-                        <div id="countdown" class="grid grid-cols-4 gap-2 mt-4 mb-4">
-                            <div class="bg-sky-100 p-2 rounded-xl">
-                                <span id="cd-days" class="font-display text-3xl font-bold text-sky-800 block">0</span>
-                                <span class="text-xs tx-muted uppercase tracking-wider">Días</span>
+                    <!-- PAPÁS Y PADRINOS -->
+                    <div class="invite-box p-6 mb-5 text-center reveal">
+                        <p class="font-script text-3xl tx-dark mb-2">Con mucho amor</p>
+                        <p class="font-elegant text-sm tx-muted mb-6">Las personas más especiales en mi día</p>
+                        
+                        <div class="mb-6">
+                            <div class="flex items-center justify-center gap-3 mb-2">
+                                <div class="h-px w-8 bg-gradient-to-r from-transparent to-sky-300/50"></div>
+                                <span class="text-base">❤️</span>
+                                <p class="font-display text-xs tx-muted uppercase tracking-[0.2em] font-semibold">Mis Padres</p>
+                                <span class="text-base">❤️</span>
+                                <div class="h-px w-8 bg-gradient-to-l from-transparent to-sky-300/50"></div>
                             </div>
-                            <div class="bg-sky-100 p-2 rounded-xl">
-                                <span id="cd-hours" class="font-display text-3xl font-bold text-sky-800 block">0</span>
-                                <span class="text-xs tx-muted uppercase tracking-wider">Hrs</span>
-                            </div>
-                            <div class="bg-sky-100 p-2 rounded-xl">
-                                <span id="cd-mins" class="font-display text-3xl font-bold text-sky-800 block">0</span>
-                                <span class="text-xs tx-muted uppercase tracking-wider">Min</span>
-                            </div>
-                            <div class="bg-sky-100 p-2 rounded-xl">
-                                <span id="cd-secs" class="font-display text-3xl font-bold text-sky-800 block">0</span>
-                                <span class="text-xs tx-muted uppercase tracking-wider">Seg</span>
-                            </div>
+                            <p class="font-display text-xl font-bold tx-dark">Pablo Criollo <span class="font-script text-2xl text-sky-600 mx-1">&</span> Marilu Garcia</p>
                         </div>
-
+                        
                         <div class="flex items-center justify-center gap-3 my-4">
-                            <div class="h-px w-12 bg-gradient-to-r from-transparent to-sky-400/60"></div>
-                            <span class="text-sky-500 text-base twinkle">✦</span>
-                            <div class="h-px w-12 bg-gradient-to-l from-transparent to-sky-400/60"></div>
+                            <div class="h-px w-24 bg-sky-100"></div>
+                            <span class="text-sky-500 text-base">✦</span>
+                            <div class="h-px w-24 bg-sky-100"></div>
                         </div>
+                        
+                        <div>
+                            <div class="flex items-center justify-center gap-3 mb-2">
+                                <div class="h-px w-8 bg-gradient-to-r from-transparent to-sky-300/50"></div>
+                                <span class="text-base">🌟</span>
+                                <p class="font-display text-xs tx-muted uppercase tracking-[0.2em] font-semibold">Mis Padrinos</p>
+                                <span class="text-base">🌟</span>
+                                <div class="h-px w-8 bg-gradient-to-l from-transparent to-sky-300/50"></div>
+                            </div>
+                            <p class="font-display text-xl font-bold tx-dark">Angel Garcia <span class="font-script text-2xl text-sky-600 mx-1">&</span> Veronica Naranjo</p>
+                        </div>
+                    </div>
 
+                    <!-- UBICACIÓN -->
+                    <div class="invite-box p-6 mb-5 text-center reveal">
                         <p class="font-elegant text-lg tx-muted mb-1">Lugar</p>
-                        <p class="font-display text-xl font-bold tx-dark mb-2">Terminal Terrestre</p>
+                        <p class="font-display text-xl font-bold tx-dark mb-4">Terminal Terrestre</p>
                         <button onclick="openFloatModal('location')" class="btn-g inline-flex items-center gap-2 px-6 py-3 text-white font-display font-semibold text-base mt-2">
                             <span>Ver Mapa</span><span>📍</span>
                         </button>
@@ -254,13 +265,12 @@
 
                     <!-- VERIFICAR INVITACIÓN -->
                     <div class="invite-box p-5 mb-5 text-center reveal bg-sky-50/50">
-                        <p class="font-elegant text-lg tx-muted mb-3">¿No sabes si estás en la lista de invitados?</p>
-                        <button onclick="openCheckInvitationModal()" class="bg-white border-2 border-sky-200 text-sky-700 hover:bg-sky-100 font-display font-bold py-3 px-8 rounded-full text-base transition-all flex items-center justify-center gap-2 mx-auto shadow-sm hover:shadow-md">
-                            🔍 Verificar Invitación
+                        <button onclick="openCheckInvitationModal()" class="bg-white border-2 border-sky-200 text-sky-700 hover:bg-sky-100 font-display font-bold py-4 px-8 rounded-full text-base transition-all flex items-center justify-center gap-2 mx-auto shadow-sm hover:shadow-md">
+                            🔍 Revisa si estás invitado a la Quinceañera de Gaby
                         </button>
                     </div>
 
-                    <!-- CONTADORES DESTACADOS CON SKELETON LOADER -->
+                    <!-- CONTADORES DESTACADOS -->
                     <div class="invite-box p-6 mb-8 text-center bg-sky-50 border-sky-200 reveal">
                         <p class="font-elegant text-lg tx-muted mb-2">Personas confirmadas:</p>
                         <p class="font-display font-bold tx-dark mb-4" style="font-size: 3.5rem; line-height: 1.2;">
@@ -313,7 +323,6 @@
 
         const AU='admin', AP='Gaby2024!'; 
         let auth=false, pending=null;
-        let currentGuestName = "";
 
         // ===== FUNCIONES NUBE =====
         async function fetchGuests() {
@@ -321,7 +330,7 @@
                 const res = await fetch(`${BIN_URL}/latest`, { headers: { 'X-Master-Key': API_KEY } });
                 const data = await res.json();
                 return data.record;
-            } catch (e) { return { invitados: [], oficial: [] }; }
+            } catch (e) { return { invitados: [], oficial: [], baseYes: 0, baseNo: 0 }; }
         }
 
         async function saveGuests(data) {
@@ -355,14 +364,18 @@
         async function upAll() {
             const data = await fetchGuests(); 
             const d = data.invitados || [];
-            const oficial = data.oficial || [];
             
-            const y = d.filter(g => g.att === 'yes');
-            const n = d.filter(g => g.att === 'no');
-            let totalYes = 0;
-            let totalNo = 0;
-            y.forEach(g => { totalYes += (g.pax || 1); });
-            n.forEach(g => { totalNo += (g.pax || 1); });
+            // Si no existe el contador manual, ponemos 105 por defecto la primera vez
+            if (data.baseYes === undefined) data.baseYes = 105;
+            if (data.baseNo === undefined) data.baseNo = 0;
+            
+            const baseYes = data.baseYes;
+            const baseNo = data.baseNo;
+            
+            // Contamos las cancelaciones de la base de datos
+            const cancelados = d.filter(g => g.att === 'no');
+            const totalNo = baseNo + cancelados.length;
+            const totalYes = baseYes;
             
             const cYes = document.getElementById('c-yes');
             const cNo = document.getElementById('c-no');
@@ -371,7 +384,7 @@
             cYes.textContent = totalYes;
             cNo.textContent = totalNo;
             
-            if (auth) renderAdminGuests(d, oficial); 
+            if (auth) renderAdminGuests(d, data); 
         }
 
         // ===== LÓGICA DE VERIFICACIÓN DE INVITACIÓN =====
@@ -380,9 +393,10 @@
             b.innerHTML = `
                 <div class="text-center px-4 py-6">
                     <span class="text-5xl block mb-3">🔍</span>
-                    <p class="font-script text-3xl tx-dark mb-4">Verificar Invitación</p>
-                    <p class="font-elegant text-base tx-muted mb-4">Escribe tu Nombre y un Apellido para buscar en nuestra lista oficial:</p>
-                    <input type="text" id="check-name" class="inp w-full px-4 py-3 text-center mb-4" placeholder="Ej: Carlos Criollo">
+                    <p class="font-script text-3xl tx-dark mb-2">Verificar Invitación</p>
+                    <p class="font-elegant text-base tx-muted mb-2">Coloca un nombre y apellido</p>
+                    <p class="font-elegant text-sm tx-muted mb-4">(Ejemplo: Gaby Criollo)</p>
+                    <input type="text" id="check-name" class="inp w-full px-4 py-3 text-center mb-4" placeholder="Ej: Gaby Criollo">
                     <button onclick="performCheck()" class="btn-g w-full py-3 text-white font-display font-bold text-base rounded-xl flex items-center justify-center gap-2">
                         Buscar en la lista
                     </button>
@@ -444,7 +458,7 @@
                 <div class="text-center px-4 py-6">
                     <span class="text-5xl block mb-3">💔</span>
                     <p class="font-script text-3xl tx-dark mb-4">Eliminar Invitación</p>
-                    <p class="font-elegant text-base tx-muted mb-4">Lamentamos que no puedas asistir. Por favor, escribe tu Nombre y un Apellido para eliminarte de la lista de confirmados:</p>
+                    <p class="font-elegant text-base tx-muted mb-4">Lamentamos que no puedas asistir. Por favor, escribe tu Nombre y un Apellido para registrarte en la lista de cancelaciones:</p>
                     <input type="text" id="cancel-name" class="inp w-full px-4 py-3 text-center mb-4" placeholder="Ej: Carlos Criollo">
                     <button onclick="performCancel()" class="bg-red-500 hover:bg-red-600 w-full py-3 text-white font-display font-bold text-base rounded-xl flex items-center justify-center gap-2 transition-colors">
                         Sí, eliminar mi invitación
@@ -464,11 +478,10 @@
                 return;
             }
             
-            resultDiv.innerHTML = `<p class="text-sky-600 font-elegant">Buscando tu registro...</p>`;
+            resultDiv.innerHTML = `<p class="text-sky-600 font-elegant">Procesando...</p>`;
             
             const data = await fetchGuests();
             const d = data.invitados || [];
-            const oficial = data.oficial || [];
             
             const inputNorm = normalizeStr(name);
             const words = inputNorm.split(' ').filter(w => w.length > 2);
@@ -476,36 +489,13 @@
             if (words.length < 2) {
                 resultDiv.innerHTML = `<div class="bg-amber-50 border border-amber-200 rounded-xl p-4 mt-4 text-center">
                     <p class="font-display text-lg font-bold text-amber-700 mb-1">Faltan datos</p>
-                    <p class="font-elegant text-sm text-amber-600">Por favor escribe tu Nombre y un Apellido para poder eliminarte.</p>
+                    <p class="font-elegant text-sm text-amber-600">Por favor escribe tu Nombre y un Apellido.</p>
                 </div>`;
                 return;
             }
 
-            let guestToRemove = null;
-            let groupToRemove = null;
-            
-            for (const g of d) {
-                const groupOfRegistered = oficial.length > 0 ? findOfficialGroup(g.name, oficial) : null;
-                const isMatch = oficial.length > 0 ? (groupToRemove && groupToRemove === findOfficialGroup(name, oficial)) : (normalizeStr(g.name) === inputNorm);
-                
-                if (isMatch) {
-                    guestToRemove = g;
-                    groupToRemove = groupOfRegistered;
-                    break;
-                }
-            }
-            
-            if (!guestToRemove) {
-                resultDiv.innerHTML = `<div class="bg-amber-50 border border-amber-200 rounded-xl p-4 mt-4 text-center">
-                    <span class="text-3xl block mb-2">🤔</span>
-                    <p class="font-display text-lg font-bold text-amber-700 mb-1">No encontramos tu registro</p>
-                    <p class="font-elegant text-sm text-amber-600">No apareces en la lista de confirmados. Quizás ya fuiste eliminado o nunca confirmaste.</p>
-                </div>`;
-                return;
-            }
-            
-            const index = d.indexOf(guestToRemove);
-            d.splice(index, 1);
+            // Agregamos a la persona a la base de datos con att: 'no'
+            d.push({ name: name, att: 'no', pax: 1, time: new Date().toLocaleString('es-MX') });
             data.invitados = d;
             
             await saveGuests(data);
@@ -513,11 +503,11 @@
             
             resultDiv.innerHTML = `<div class="bg-sky-50 border border-sky-200 rounded-xl p-4 mt-4 text-center">
                 <span class="text-3xl block mb-2">✅</span>
-                <p class="font-display text-lg font-bold text-sky-800 mb-1">Invitación Eliminada</p>
-                <p class="font-elegant text-sm tx-muted">Hola <b>${name}</b>, hemos eliminado tu registro de la lista. Lamentamos que no puedas asistir. ¡Gracias por avisarnos!</p>
+                <p class="font-display text-lg font-bold text-sky-800 mb-1">Registro Guardado</p>
+                <p class="font-elegant text-sm tx-muted">Hola <b>${name}</b>, hemos registrado que no asistirás. Lamentamos que no puedas acompañarnos. ¡Gracias por avisarnos!</p>
             </div>`;
             
-            toast('💔', 'Invitación Eliminada', 'Gracias por avisarnos.');
+            toast('💔', 'Cancelación Registrada', 'Gracias por avisarnos.');
         }
 
         function normalizeStr(s) {
@@ -576,12 +566,34 @@
         }
 
         async function openAdminPanel() {
+            const data = await fetchGuests();
+            const d = data.invitados || [];
+            const oficial = data.oficial || [];
+            const baseYes = data.baseYes !== undefined ? data.baseYes : 105;
+            const baseNo = data.baseNo !== undefined ? data.baseNo : 0;
+            
             const b = document.getElementById('float-modal-body');
             b.innerHTML = `
                 <div>
                     <div class="flex items-center justify-between mb-4">
                         <p class="font-script text-3xl tx-dark">Panel Admin</p>
                         <button onclick="closeFloatModal()" class="text-sm tx-muted underline">Cerrar</button>
+                    </div>
+
+                    <div class="bg-sky-50 rounded-2xl p-4 border border-sky-200 mb-4">
+                        <p class="font-display font-bold text-base tx-dark mb-2">Ajustar Contadores</p>
+                        <p class="text-xs tx-muted mb-3">Modifica manualmente cuántas personas han confirmado o cancelado.</p>
+                        <div class="grid grid-cols-2 gap-2 mb-3">
+                            <div>
+                                <label class="text-xs tx-muted font-bold">Confirmados</label>
+                                <input type="number" id="admin-base-yes" class="inp w-full px-3 py-2 text-sm mt-1" value="${baseYes}">
+                            </div>
+                            <div>
+                                <label class="text-xs tx-muted font-bold">Cancelados (Base)</label>
+                                <input type="number" id="admin-base-no" class="inp w-full px-3 py-2 text-sm mt-1" value="${baseNo}">
+                            </div>
+                        </div>
+                        <button onclick="saveBaseCounters()" class="btn-g w-full py-2 text-white text-sm rounded-xl">Guardar Contadores</button>
                     </div>
 
                     <div class="bg-sky-50 rounded-2xl p-4 border border-sky-200 mb-4">
@@ -610,7 +622,7 @@
                     </div>
 
                     <div class="bg-white rounded-2xl p-4 border border-gray-200 mb-4">
-                        <p class="font-display font-bold text-base tx-dark mb-2">Lista de Confirmaciones</p>
+                        <p class="font-display font-bold text-base tx-dark mb-2">Lista de Cancelaciones (No Asistirán)</p>
                         <div id="admin-g-list" class="space-y-2 max-h-[30vh] overflow-y-auto scroll-area"></div>
                     </div>
                     
@@ -622,7 +634,16 @@
                 </div>
             `;
             document.getElementById('float-modal').classList.add('on');
-            upAll(); 
+            renderAdminGuests(d, data);
+        }
+
+        async function saveBaseCounters() {
+            const data = await fetchGuests();
+            data.baseYes = parseInt(document.getElementById('admin-base-yes').value) || 0;
+            data.baseNo = parseInt(document.getElementById('admin-base-no').value) || 0;
+            await saveGuests(data);
+            upAll();
+            toast('✅', 'Contadores Guardados', '');
         }
 
         function processExcel() {
@@ -669,26 +690,22 @@
             toast('✅', 'Lista Oficial Guardada', '');
         }
 
-        async function renderAdminGuests(d, oficial) {
+        async function renderAdminGuests(d, data) {
             const l = document.getElementById('admin-g-list');
             const txtArea = document.getElementById('oficial-list');
             
-            if (txtArea && oficial) {
-                txtArea.value = oficial.join('\n');
+            if (txtArea && data.oficial) {
+                txtArea.value = data.oficial.join('\n');
             }
             
             if(!l) return;
-            if(!d.length){ l.innerHTML = `<p class="text-center tx-muted text-sm py-4">Sin registros</p>`; return; }
-            l.innerHTML = d.map((g)=>{
-                const y = g.att === 'yes';
-                let paxInfo = y ? `Asiste (${g.pax||1} pax)` : `No asiste`;
-                if (y && g.adults !== undefined) {
-                    paxInfo = `Asiste (${g.adults} A, ${g.kids||0} N)`;
-                }
+            const cancels = d.filter(g => g.att === 'no');
+            if(!cancels.length){ l.innerHTML = `<p class="text-center tx-muted text-sm py-4">Sin cancelaciones</p>`; return; }
+            l.innerHTML = cancels.map((g)=>{
                 return `<div class="bg-gray-50 p-2 rounded-lg text-sm flex justify-between items-center">
                     <div>
                         <p class="font-bold tx-dark">${g.name}</p>
-                        <p class="text-xs ${y?'text-green-600':'text-red-500'}">${paxInfo}</p>
+                        <p class="text-xs text-red-500">No asistirá</p>
                     </div>
                     <button onclick="delGuest('${g.name}','${g.time}')" class="text-red-400 hover:text-red-600 text-xs">✕</button>
                 </div>`;
@@ -717,7 +734,7 @@
                 toast('🗑️', 'Todo borrado', '');
             };
             closeFloatModal();
-            document.getElementById('mod-t').textContent='Eliminar TODOS los registros de confirmación?';
+            document.getElementById('mod-t').textContent='Eliminar TODOS los registros de cancelación?';
             document.getElementById('mod-c').classList.add('on');
         }
 
@@ -747,21 +764,17 @@
             const doc = new jsPDF();
             doc.setFontSize(20);
             doc.setTextColor(2, 132, 199);
-            doc.text("Lista de Invitados - XV Años Gaby", 105, 20, { align: 'center' });
+            doc.text("Lista de Cancelaciones - XV Años Gaby", 105, 20, { align: 'center' });
             doc.setFontSize(12);
             doc.setTextColor(100);
-            doc.text(`Total: ${d.length} respuestas`, 105, 30, { align: 'center' });
+            doc.text(`Total: ${d.length} cancelaciones`, 105, 30, { align: 'center' });
             let y = 45;
             doc.setFontSize(11);
             doc.setTextColor(50);
             d.forEach((g, i) => {
                 if (y > 270) { doc.addPage(); y = 20; }
-                let status = g.att === 'yes' ? `ASISTIRÁ (${g.pax||1} pax)` : `NO ASISTIRÁ`;
-                if (g.att === 'yes' && g.adults !== undefined) {
-                    status = `ASISTIRÁ (${g.adults} Adultos, ${g.kids||0} Niños)`;
-                }
-                doc.setTextColor(g.att === 'yes' ? 0 : 200, g.att === 'yes' ? 150 : 0, 0);
-                doc.text(`${i + 1}. ${g.name} (${status})`, 20, y);
+                doc.setTextColor(200, 0, 0);
+                doc.text(`${i + 1}. ${g.name} (NO ASISTIRÁ)`, 20, y);
                 y += 7;
                 doc.setTextColor(150);
                 doc.setFontSize(9);
@@ -769,7 +782,7 @@
                 y += 10;
                 doc.setFontSize(11);
             });
-            doc.save('lista_invitados_xv.pdf');
+            doc.save('lista_cancelaciones_xv.pdf');
             toast('📄', 'PDF Descargado', '');
         }
 
@@ -777,14 +790,10 @@
             const data = await fetchGuests();
             const d = data.invitados || [];
             if(!d.length){ toast('⚠️','Sin datos',''); return; }
-            let c='Nombre,Asistencia,Adultos,Niños,Total,Fecha\n';
-            d.forEach(g=>{ 
-                const adults = g.adults !== undefined ? g.adults : (g.att === 'yes' ? (g.pax||1) : 0);
-                const kids = g.kids || 0;
-                c+=`"${g.name}","${g.att==='yes'?'Si':'No'}","${adults}","${kids}","${g.pax||1}","${g.time||''}"\n` 
-            });
+            let c='Nombre,Estado,Fecha\n';
+            d.forEach(g=>{ c+=`"${g.name}","NO ASISTIRÁ","${g.time||''}"\n` });
             const b=new Blob(['\ufeff'+c],{type:'text/csv;charset=utf-8;'});
-            const a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download='confirmaciones.csv'; a.click();
+            const a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download='cancelaciones.csv'; a.click();
             toast('📥','Descargado','');
         }
 
@@ -792,42 +801,10 @@
             const urlParams = new URLSearchParams(window.location.search);
             const guestName = urlParams.get('invitado');
             if (guestName) {
-                currentGuestName = decodeURIComponent(guestName.replace(/\+/g, ' '));
+                const currentGuestName = decodeURIComponent(guestName.replace(/\+/g, ' '));
                 document.getElementById('guest-name-display').textContent = currentGuestName;
                 document.getElementById('guest-greeting-box').classList.remove('hidden');
             }
-        }
-
-        // ===== CUENTA REGRESIVA ARREGLADA =====
-        function startCountdown() {
-            // Fecha exacta del evento: 17 de Octubre de 2024 a las 8:00 PM (20:00)
-            const eventDate = new Date("October 17, 2024 20:00:00").getTime();
-            const x = setInterval(function() {
-                const now = new Date().getTime();
-                const distance = eventDate - now;
-                
-                // Si la fecha ya pasó
-                if (distance < 0) {
-                    clearInterval(x);
-                    document.getElementById("cd-days").innerText = "0";
-                    document.getElementById("cd-hours").innerText = "0";
-                    document.getElementById("cd-mins").innerText = "0";
-                    document.getElementById("cd-secs").innerText = "0";
-                    return;
-                }
-
-                // Cálculo exacto
-                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-                // Mostrar en pantalla
-                document.getElementById("cd-days").innerText = days;
-                document.getElementById("cd-hours").innerText = hours;
-                document.getElementById("cd-mins").innerText = minutes;
-                document.getElementById("cd-secs").innerText = seconds;
-            }, 1000);
         }
 
         // ===== SCROLL REVEAL =====
@@ -852,7 +829,7 @@
         let tt=null;function toast(i,t,m){const e=document.getElementById('toast');document.getElementById('t-ico').textContent=i;document.getElementById('t-tit').textContent=t;document.getElementById('t-msg').textContent=m;e.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>e.classList.remove('show'),3000)}
 
         function makePetals(){const c=document.getElementById('petals'),cl=['#7dd3fc','#bae6fd','#e0f2fe','#38bdf8'];for(let i=0;i<12;i++){const p=document.createElement('div');p.className='petal';const s=6+Math.random()*10;p.style.cssText=`width:${s}px;height:${s}px;left:${Math.random()*100}%;background:${cl[i%cl.length]};animation:petal-fall ${8+Math.random()*8}s linear infinite;animation-delay:${Math.random()*10}s;opacity:${.2+Math.random()*.3}`;c.appendChild(p)}}
-        function openEnv(){document.getElementById('env-seal').classList.add('go');setTimeout(()=>document.getElementById('env-flap').classList.add('go'),300);setTimeout(()=>{document.getElementById('env-scene').classList.add('bye');setTimeout(()=>{document.getElementById('env-screen').style.display='none';document.getElementById('main-screen').classList.add('show');applyPhotoBg();burstConfetti();startCountdown();initScrollReveal();},400)},700)}
+        function openEnv(){document.getElementById('env-seal').classList.add('go');setTimeout(()=>document.getElementById('env-flap').classList.add('go'),300);setTimeout(()=>{document.getElementById('env-scene').classList.add('bye');setTimeout(()=>{document.getElementById('env-screen').style.display='none';document.getElementById('main-screen').classList.add('show');applyPhotoBg();burstConfetti();initScrollReveal();},400)},700)}
         function burstConfetti(){const cl=['#0ea5e9','#38bdf8','#7dd3fc','#bae6fd','#0284c7'];for(let i=0;i<40;i++){const c=document.createElement('div');c.className='confetti';const s=4+Math.random()*6;c.style.cssText=`width:${s}px;height:${s*1.4}px;left:${Math.random()*100}%;background:${cl[i%cl.length]};border-radius:${Math.random()>.5?'50%':'2px'};animation:confetti-fall ${2+Math.random()*3}s linear forwards;animation-delay:${Math.random()*.8}s`;document.body.appendChild(c);setTimeout(()=>c.remove(),5000)}}
 
         document.addEventListener('DOMContentLoaded',function(){
