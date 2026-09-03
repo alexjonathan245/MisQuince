@@ -85,26 +85,6 @@
             transform: translateY(0);
         }
 
-        /* Floating Buttons */
-        .float-btn {
-            position: fixed;
-            width: 56px;
-            height: 56px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            z-index: 100;
-            cursor: pointer;
-            font-size: 24px;
-            color: white;
-            transition: transform 0.3s;
-        }
-        .float-btn:hover { transform: scale(1.1); }
-        .music-btn { top: 20px; right: 20px; background: linear-gradient(135deg, #0ea5e9, #0284c7); }
-        .wa-btn { bottom: 20px; right: 20px; background: #25D366; }
-
         .inp{background:white;border:1.5px solid rgba(14,165,233,.2);color:#111;transition:all .3s;font-family:'Cormorant Garamond',serif;border-radius:14px;font-size:16px}
         .inp:focus{outline:none;border-color:#0ea5e9;box-shadow:0 0 0 3px rgba(14,165,233,.1)}
         .inp::placeholder{color:rgba(0,0,0,.3)}
@@ -148,15 +128,6 @@
 </head>
 <body>
     <div id="petals"></div>
-
-    <!-- Música de Fondo -->
-    <audio id="bg-music" loop>
-        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3" type="audio/mpeg">
-    </audio>
-    <div class="float-btn music-btn" onclick="toggleMusic()" id="music-btn">🎵</div>
-
-    <!-- Botón Flotante WhatsApp -->
-    <a href="https://wa.me/593999999999?text=Hola%20Gaby,%20confirmo%20mi%20asistencia%20a%20tus%20XV%20Años" target="_blank" class="float-btn wa-btn">💬</a>
 
     <!-- SOBRE -->
     <div id="env-screen" class="bg-main">
@@ -353,17 +324,24 @@
 
                     <!-- CONTADORES DESTACADOS CON SKELETON LOADER -->
                     <div class="invite-box p-6 mb-8 text-center bg-sky-50 border-sky-200 reveal">
-                        <p class="font-elegant text-lg tx-muted mb-2">Hasta ahora, han confirmado:</p>
+                        <p class="font-elegant text-lg tx-muted mb-2">Personas confirmadas:</p>
                         <p class="font-display font-bold tx-dark mb-4" style="font-size: 3.5rem; line-height: 1.2;">
-                            <span id="c-yes" class="text-sky-600 skeleton">0</span> <span class="text-sky-800">personas</span> 💙
+                            <span id="c-yes" class="text-sky-600 skeleton">0</span> <span class="text-sky-800">personas 💙</span>
                         </p>
                         
                         <div class="h-px w-24 bg-sky-200 mx-auto my-3"></div>
                         
                         <p class="font-elegant text-base tx-muted mb-1">No podrán asistir:</p>
                         <p class="font-display font-bold text-red-600" style="font-size: 2.5rem; line-height: 1.2;">
-                            <span id="c-no" class="text-red-700 skeleton">0</span> <span class="text-red-700">personas</span> 💔
+                            <span id="c-no" class="text-red-700 skeleton">0</span> <span class="text-red-700">personas 💔</span>
                         </p>
+                        
+                        <!-- BOTÓN ELIMINAR INVITACIÓN -->
+                        <div class="mt-6 pt-4 border-t border-sky-100">
+                            <button onclick="openCancelInvitationModal()" class="text-sm text-red-500 hover:text-red-700 font-display font-semibold transition-colors underline">
+                                No voy a asistir, eliminar mi invitación
+                            </button>
+                        </div>
                     </div>
 
                     <!-- ACCESO ADMINISTRADOR -->
@@ -521,6 +499,89 @@
                     </div>
                 `;
             }
+        }
+
+        // ===== LÓGICA DE ELIMINAR INVITACIÓN =====
+        function openCancelInvitationModal() {
+            const b = document.getElementById('float-modal-body');
+            b.innerHTML = `
+                <div class="text-center px-4 py-6">
+                    <span class="text-5xl block mb-3">💔</span>
+                    <p class="font-script text-3xl tx-dark mb-4">Eliminar Invitación</p>
+                    <p class="font-elegant text-base tx-muted mb-4">Lamentamos que no puedas asistir. Por favor, escribe tu Nombre y un Apellido para eliminarte de la lista de confirmados:</p>
+                    <input type="text" id="cancel-name" class="inp w-full px-4 py-3 text-center mb-4" placeholder="Ej: Carlos Criollo">
+                    <button onclick="performCancel()" class="bg-red-500 hover:bg-red-600 w-full py-3 text-white font-display font-bold text-base rounded-xl flex items-center justify-center gap-2 transition-colors">
+                        Sí, eliminar mi invitación
+                    </button>
+                    <div id="cancel-result" class="mt-4 text-center"></div>
+                </div>
+            `;
+            document.getElementById('float-modal').classList.add('on');
+        }
+
+        async function performCancel() {
+            const name = document.getElementById('cancel-name').value.trim();
+            const resultDiv = document.getElementById('cancel-result');
+            
+            if (!name) {
+                resultDiv.innerHTML = `<p class="text-amber-600 font-elegant">Por favor escribe tu nombre para continuar.</p>`;
+                return;
+            }
+            
+            resultDiv.innerHTML = `<p class="text-sky-600 font-elegant">Buscando tu registro...</p>`;
+            
+            const data = await fetchGuests();
+            const d = data.invitados || [];
+            const oficial = data.oficial || [];
+            
+            const inputNorm = normalizeStr(name);
+            const words = inputNorm.split(' ').filter(w => w.length > 2);
+            
+            if (words.length < 2) {
+                resultDiv.innerHTML = `<div class="bg-amber-50 border border-amber-200 rounded-xl p-4 mt-4 text-center">
+                    <p class="font-display text-lg font-bold text-amber-700 mb-1">Faltan datos</p>
+                    <p class="font-elegant text-sm text-amber-600">Por favor escribe tu Nombre y un Apellido para poder eliminarte.</p>
+                </div>`;
+                return;
+            }
+
+            let guestToRemove = null;
+            let groupToRemove = null;
+            
+            for (const g of d) {
+                const groupOfRegistered = oficial.length > 0 ? findOfficialGroup(g.name, oficial) : null;
+                const isMatch = oficial.length > 0 ? (groupToRemove && groupToRemove === findOfficialGroup(name, oficial)) : (normalizeStr(g.name) === inputNorm);
+                
+                if (isMatch) {
+                    guestToRemove = g;
+                    groupToRemove = groupOfRegistered;
+                    break;
+                }
+            }
+            
+            if (!guestToRemove) {
+                resultDiv.innerHTML = `<div class="bg-amber-50 border border-amber-200 rounded-xl p-4 mt-4 text-center">
+                    <span class="text-3xl block mb-2">🤔</span>
+                    <p class="font-display text-lg font-bold text-amber-700 mb-1">No encontramos tu registro</p>
+                    <p class="font-elegant text-sm text-amber-600">No apareces en la lista de confirmados. Quizás ya fuiste eliminado o nunca confirmaste.</p>
+                </div>`;
+                return;
+            }
+            
+            const index = d.indexOf(guestToRemove);
+            d.splice(index, 1);
+            data.invitados = d;
+            
+            await saveGuests(data);
+            upAll();
+            
+            resultDiv.innerHTML = `<div class="bg-sky-50 border border-sky-200 rounded-xl p-4 mt-4 text-center">
+                <span class="text-3xl block mb-2">✅</span>
+                <p class="font-display text-lg font-bold text-sky-800 mb-1">Invitación Eliminada</p>
+                <p class="font-elegant text-sm tx-muted">Hola <b>${name}</b>, hemos eliminado tu registro de la lista. Lamentamos que no puedas asistir. ¡Gracias por avisarnos!</p>
+            </div>`;
+            
+            toast('💔', 'Invitación Eliminada', 'Gracias por avisarnos.');
         }
 
         // ===== LÓGICA DE CONFIRMACIÓN =====
@@ -1002,19 +1063,7 @@
             }
         }
 
-        // ===== MÚSICA Y CUENTA REGRESIVA =====
-        function toggleMusic() {
-            const audio = document.getElementById('bg-music');
-            const btn = document.getElementById('music-btn');
-            if (audio.paused) {
-                audio.play();
-                btn.innerHTML = '🔊';
-            } else {
-                audio.pause();
-                btn.innerHTML = '🎵';
-            }
-        }
-
+        // ===== CUENTA REGRESIVA ARREGLADA =====
         function startCountdown() {
             const eventDate = new Date("October 17, 2024 20:00:00").getTime();
             const x = setInterval(function() {
