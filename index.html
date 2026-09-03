@@ -149,13 +149,13 @@
 <body>
     <div id="petals"></div>
 
-    <!-- Música de Fondo (Puedes cambiar el src por tu MP3) -->
+    <!-- Música de Fondo -->
     <audio id="bg-music" loop>
         <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3" type="audio/mpeg">
     </audio>
     <div class="float-btn music-btn" onclick="toggleMusic()" id="music-btn">🎵</div>
 
-    <!-- Botón Flotante WhatsApp (Cambia el número 593999999999 por el tuyo) -->
+    <!-- Botón Flotante WhatsApp -->
     <a href="https://wa.me/593999999999?text=Hola%20Gaby,%20confirmo%20mi%20asistencia%20a%20tus%20XV%20Años" target="_blank" class="float-btn wa-btn">💬</a>
 
     <!-- SOBRE -->
@@ -287,6 +287,14 @@
                         </div>
                     </div>
 
+                    <!-- VERIFICAR INVITACIÓN -->
+                    <div class="invite-box p-5 mb-5 text-center reveal bg-sky-50/50">
+                        <p class="font-elegant text-lg tx-muted mb-3">¿No sabes si estás en la lista de invitados?</p>
+                        <button onclick="openCheckInvitationModal()" class="bg-white border-2 border-sky-200 text-sky-700 hover:bg-sky-100 font-display font-bold py-3 px-8 rounded-full text-base transition-all flex items-center justify-center gap-2 mx-auto shadow-sm hover:shadow-md">
+                            🔍 Verificar Invitación
+                        </button>
+                    </div>
+
                     <!-- CONFIRMACIÓN DE ASISTENCIA -->
                     <div class="invite-box p-6 mb-5 reveal">
                         <div class="text-center mb-4">
@@ -383,13 +391,11 @@
     <div id="toast" class="toast-c"><div class="bg-white border border-black/10 rounded-2xl px-5 py-3 shadow-xl flex items-center gap-3"><span id="t-ico" class="text-xl">✅</span><div><p id="t-tit" class="font-display font-bold tx-dark text-sm"></p><p id="t-msg" class="tx-muted text-sm font-elegant"></p></div></div></div>
 
     <script>
-        // ===== TUS DATOS DE JSONBIN CONFIGURADOS =====
         const BIN_URL = "https://api.jsonbin.io/v3/b/6a91d516f5f4af5e294ef1c2"; 
         const API_KEY = "$2a$10$BAhARkBhTbB6InHiDUxsIOgRZhSFTDZzDELpV8NZKt0tBqliPX/FK";
         const PHOTO_URL = "https://1drv.ms/i/c/6cc2f784eb96b5ce/IQBVp7bbpM80TYC8XJBZvo0TAVCrRlsSbSIH5Ux6lWMPdpU?e=F09Yce";
-        // =============================================
 
-        const AU='admin', AP='Gaby2024!'; // CONTRASEÑA DE ADMIN MEJORADA
+        const AU='admin', AP='Gaby2024!'; 
         let auth=false, pending=null;
         let currentAtt = null;
         let currentPax = { adults: 1, kids: 0 };
@@ -444,7 +450,6 @@
             y.forEach(g => { totalYes += (g.pax || 1); });
             n.forEach(g => { totalNo += (g.pax || 1); });
             
-            // Quitar skeleton y poner números reales
             const cYes = document.getElementById('c-yes');
             const cNo = document.getElementById('c-no');
             cYes.classList.remove('skeleton');
@@ -453,6 +458,69 @@
             cNo.textContent = totalNo;
             
             if (auth) renderAdminGuests(d, oficial); 
+        }
+
+        // ===== LÓGICA DE VERIFICACIÓN DE INVITACIÓN =====
+        function openCheckInvitationModal() {
+            const b = document.getElementById('float-modal-body');
+            b.innerHTML = `
+                <div class="text-center px-4 py-6">
+                    <span class="text-5xl block mb-3">🔍</span>
+                    <p class="font-script text-3xl tx-dark mb-4">Verificar Invitación</p>
+                    <p class="font-elegant text-base tx-muted mb-4">Escribe tu Nombre y un Apellido para buscar en nuestra lista oficial:</p>
+                    <input type="text" id="check-name" class="inp w-full px-4 py-3 text-center mb-4" placeholder="Ej: Carlos Criollo">
+                    <button onclick="performCheck()" class="btn-g w-full py-3 text-white font-display font-bold text-base rounded-xl flex items-center justify-center gap-2">
+                        Buscar en la lista
+                    </button>
+                    <div id="check-result" class="mt-4 text-center"></div>
+                </div>
+            `;
+            document.getElementById('float-modal').classList.add('on');
+        }
+
+        async function performCheck() {
+            const name = document.getElementById('check-name').value.trim();
+            const resultDiv = document.getElementById('check-result');
+            
+            if (!name) {
+                resultDiv.innerHTML = `<p class="text-amber-600 font-elegant">Por favor escribe tu nombre para buscar.</p>`;
+                return;
+            }
+            
+            resultDiv.innerHTML = `<p class="text-sky-600 font-elegant">Buscando en la lista...</p>`;
+            
+            const data = await fetchGuests();
+            const oficial = data.oficial || [];
+            
+            if (oficial.length === 0) {
+                resultDiv.innerHTML = `<div class="bg-amber-50 border border-amber-200 rounded-xl p-4 mt-4 text-center">
+                    <span class="text-3xl block mb-2">⏳</span>
+                    <p class="font-display text-lg font-bold text-amber-700 mb-1">Lista no disponible</p>
+                    <p class="font-elegant text-sm text-amber-600">Aún no se ha subido la lista oficial de invitados. Vuelve a intentarlo más tarde.</p>
+                </div>`;
+                return;
+            }
+
+            const groupFound = findOfficialGroup(name, oficial);
+            
+            if (groupFound) {
+                resultDiv.innerHTML = `
+                    <div class="bg-sky-50 border border-sky-200 rounded-xl p-4 mt-4 text-center">
+                        <span class="text-3xl block mb-2">💙</span>
+                        <p class="font-display text-lg font-bold text-sky-800 mb-1">¡Sí, estás invitado!</p>
+                        <p class="font-elegant text-sm tx-muted">Te encontramos en la invitación con:</p>
+                        <p class="font-display font-bold text-sky-900 mt-1">${groupFound}</p>
+                    </div>
+                `;
+            } else {
+                resultDiv.innerHTML = `
+                    <div class="bg-red-50 border border-red-200 rounded-xl p-4 mt-4 text-center">
+                        <span class="text-3xl block mb-2">⚠️</span>
+                        <p class="font-display text-lg font-bold text-red-700 mb-1">No te encontramos</p>
+                        <p class="font-elegant text-sm text-red-500">Verifica que hayas escrito tu nombre y apellido correctamente. Si crees que es un error, comunícate con los organizadores.</p>
+                    </div>
+                `;
+            }
         }
 
         // ===== LÓGICA DE CONFIRMACIÓN =====
@@ -503,7 +571,6 @@
                 
                 if (groupNorm.includes(inputNorm)) return group;
                 
-                // Combinaciones de palabras para segundos nombres
                 const firstTwoWords = words.slice(0, 2).join(' ');
                 if (groupNorm.includes(firstTwoWords)) return group;
                 
@@ -597,7 +664,6 @@
             await saveGuests(data);
             upAll();
             
-            // Ocultar formulario para evitar doble envío, dejar solo el contador
             document.getElementById('pax-selector').classList.add('hidden');
             
             showThankYouModal(currentGuestName, currentAtt, totalPax, officialGroupName);
