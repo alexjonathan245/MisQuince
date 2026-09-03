@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>XV Años - Gaby Criollo García 👑</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Librerías para Excel y PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,500&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
     <script>
@@ -231,18 +233,36 @@
 
                         <div id="pax-selector" class="hidden mt-5 pt-5 border-t border-sky-100">
                             
-                            <!-- CAMPO DE TEXTO PARA NOMBRE (Si no hay URL personalizada) -->
+                            <!-- CAMPO DE TEXTO PARA NOMBRE -->
                             <div id="name-input-section" class="hidden mb-5 pb-4 border-b border-sky-100">
                                 <p class="text-center font-elegant text-base tx-muted mb-3">Ponga 1 Nombre y 1 Apellido para verificar su invitación:</p>
                                 <input type="text" id="manual-guest-name" class="inp w-full px-4 py-3 text-center mb-3" placeholder="Ej: Carlos Criollo">
                             </div>
 
-                            <p id="pax-text" class="text-center font-elegant text-base tx-muted mb-3">¿Cuántas personas asistirán en total? (Incluyéndote)</p>
-                            <div class="flex items-center justify-center gap-4 mb-4">
-                                <button onclick="changePax(-1)" class="w-12 h-12 rounded-full bg-sky-100 text-sky-700 text-2xl font-bold flex items-center justify-center">-</button>
-                                <span id="pax-count" class="font-display text-4xl font-bold tx-dark w-12 text-center">1</span>
-                                <button onclick="changePax(1)" class="w-12 h-12 rounded-full bg-sky-100 text-sky-700 text-2xl font-bold flex items-center justify-center">+</button>
+                            <!-- SELECTOR DE ADULTOS Y NIÑOS (SOLO SI ASISTE) -->
+                            <div id="attend-details" class="hidden mb-5">
+                                <div class="grid grid-cols-2 gap-4 text-center">
+                                    <div>
+                                        <p class="font-elegant text-base tx-muted mb-2 font-bold">Adultos</p>
+                                        <p class="text-xs tx-muted mb-2">(Incluyéndote)</p>
+                                        <div class="flex items-center justify-center gap-3">
+                                            <button onclick="changePax('adults', -1)" class="w-10 h-10 rounded-full bg-sky-100 text-sky-700 text-xl font-bold flex items-center justify-center">-</button>
+                                            <span id="pax-adults" class="font-display text-3xl font-bold tx-dark w-10 text-center">1</span>
+                                            <button onclick="changePax('adults', 1)" class="w-10 h-10 rounded-full bg-sky-100 text-sky-700 text-xl font-bold flex items-center justify-center">+</button>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <p class="font-elegant text-base tx-muted mb-2 font-bold">Niños</p>
+                                        <p class="text-xs tx-muted mb-2">(Si no llevas, pon 0)</p>
+                                        <div class="flex items-center justify-center gap-3">
+                                            <button onclick="changePax('kids', -1)" class="w-10 h-10 rounded-full bg-sky-100 text-sky-700 text-xl font-bold flex items-center justify-center">-</button>
+                                            <span id="pax-kids" class="font-display text-3xl font-bold tx-dark w-10 text-center">0</span>
+                                            <button onclick="changePax('kids', 1)" class="w-10 h-10 rounded-full bg-sky-100 text-sky-700 text-xl font-bold flex items-center justify-center">+</button>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
+
                             <button id="submit-rsvp-btn" onclick="submitRSVP()" class="btn-g w-full py-3 text-white font-display font-bold text-base tracking-wider flex items-center justify-center gap-2">
                                 Confirmar <span>👑</span>
                             </button>
@@ -296,7 +316,7 @@
         const AU='admin', AP='admin'; 
         let auth=false, pending=null;
         let currentAtt = null;
-        let currentPax = 1;
+        let currentPax = { adults: 1, kids: 0 };
         let currentGuestName = "";
 
         // ===== FUNCIONES NUBE =====
@@ -354,41 +374,44 @@
             if (auth) renderAdminGuests(d, oficial); 
         }
 
-        // ===== LÓGICA DE VALIDACIÓN Y CONFIRMACIÓN =====
+        // ===== LÓGICA DE CONFIRMACIÓN =====
         function confirmAttendance(status) {
             currentAtt = status;
-            const paxText = document.getElementById('pax-text');
-            
-            if (status === 'yes') {
-                paxText.innerText = '¿Cuántas personas asistirán en total? (Incluyéndote)';
-            } else {
-                paxText.innerText = '¿Cuántas personas no podrán asistir en total? (Incluyéndote)';
-            }
             
             document.getElementById('pax-selector').classList.remove('hidden');
             
-            // Mostrar campo de texto solo si no hay nombre en la URL
             if (!currentGuestName) {
                 document.getElementById('name-input-section').classList.remove('hidden');
             } else {
                 document.getElementById('name-input-section').classList.add('hidden');
             }
             
-            currentPax = 1;
-            document.getElementById('pax-count').textContent = currentPax;
+            // Mostrar selectores solo si van a asistir
+            if (status === 'yes') {
+                document.getElementById('attend-details').classList.remove('hidden');
+                currentPax = { adults: 1, kids: 0 };
+                document.getElementById('pax-adults').textContent = 1;
+                document.getElementById('pax-kids').textContent = 0;
+            } else {
+                document.getElementById('attend-details').classList.add('hidden');
+                currentPax = { adults: 0, kids: 0 };
+            }
         }
 
-        function changePax(val) {
-            currentPax = Math.max(1, currentPax + val);
-            document.getElementById('pax-count').textContent = currentPax;
+        function changePax(type, val) {
+            if (type === 'adults') {
+                currentPax.adults = Math.max(1, currentPax.adults + val);
+                document.getElementById('pax-adults').textContent = currentPax.adults;
+            } else {
+                currentPax.kids = Math.max(0, currentPax.kids + val);
+                document.getElementById('pax-kids').textContent = currentPax.kids;
+            }
         }
 
-        // Función para normalizar texto (quitar tildes y minúsculas)
         function normalizeStr(s) {
             return s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
         }
 
-        // Función auxiliar para encontrar el grupo familiar exacto
         function findOfficialGroup(name, oficial) {
             const inputNorm = normalizeStr(name);
             const words = inputNorm.split(' ').filter(w => w.length > 2);
@@ -397,33 +420,24 @@
 
             for (const group of oficial) {
                 const groupNorm = normalizeStr(group);
-                
-                if (groupNorm.includes(inputNorm)) {
-                    return group;
-                }
+                if (groupNorm.includes(inputNorm)) return group;
                 
                 const firstTwoWords = words.slice(0, 2).join(' ');
-                if (groupNorm.includes(firstTwoWords)) {
-                    return group;
-                }
+                if (groupNorm.includes(firstTwoWords)) return group;
                 
                 if (words.length >= 3) {
                     const firstLastWords = `${words[0]} ${words[words.length - 1]}`;
-                    if (groupNorm.includes(firstLastWords)) {
-                        return group;
-                    }
+                    if (groupNorm.includes(firstLastWords)) return group;
                 }
             }
             return null;
         }
 
         async function submitRSVP() {
-            // Deshabilitar botón inmediatamente para evitar doble clic
             const submitBtn = document.getElementById('submit-rsvp-btn');
             submitBtn.disabled = true;
             submitBtn.innerHTML = 'Enviando... <span>⏳</span>';
 
-            // Si no hay nombre en la URL, tomarlo del campo de texto
             if (!currentGuestName) {
                 const nameInput = document.getElementById('manual-guest-name').value.trim();
                 if (!nameInput) {
@@ -449,7 +463,6 @@
                 return;
             }
 
-            // 1. Buscar a qué grupo oficial pertenece
             let officialGroupName = "";
             if (oficial.length > 0) {
                 const groupFound = findOfficialGroup(currentGuestName, oficial);
@@ -462,7 +475,6 @@
                 officialGroupName = groupFound;
             }
 
-            // 2. Verificar si ALGUIEN DE SU MISMO GRUPO FAMILIAR ya confirmó
             let alreadyConfirmed = null;
             if (officialGroupName) {
                 for (const g of d) {
@@ -483,12 +495,15 @@
                 return;
             }
 
-            // 3. Registrar
-            const pax = currentPax;
+            // Calcular total de pax
+            const totalPax = currentAtt === 'yes' ? (currentPax.adults + currentPax.kids) : 1;
+            
             const en = {
                 name: currentGuestName,
                 att: currentAtt,
-                pax: pax,
+                pax: totalPax,
+                adults: currentAtt === 'yes' ? currentPax.adults : 0,
+                kids: currentAtt === 'yes' ? currentPax.kids : 0,
                 time: new Date().toLocaleString('es-MX')
             };
 
@@ -500,9 +515,8 @@
             
             document.getElementById('pax-selector').classList.add('hidden');
             
-            showThankYouModal(currentGuestName, currentAtt, pax, officialGroupName);
+            showThankYouModal(currentGuestName, currentAtt, totalPax, officialGroupName);
             
-            // Restaurar botón por si vuelve a usar la sección
             submitBtn.disabled = false;
             submitBtn.innerHTML = 'Confirmar <span>👑</span>';
         }
@@ -538,7 +552,7 @@
             if (guestData.att === 'yes') {
                 statusMsg = `<p class="font-elegant text-base font-bold text-sky-700 mt-2">Ya han confirmado su asistencia (${guestData.pax} pax).</p>`;
             } else {
-                statusMsg = `<p class="font-elegant text-base font-bold text-red-500 mt-2">Ya confirmaron que no asistirán (${guestData.pax} pax).</p>`;
+                statusMsg = `<p class="font-elegant text-base font-bold text-red-500 mt-2">Ya confirmaron que no asistirán.</p>`;
             }
             
             b.innerHTML = `
@@ -570,7 +584,7 @@
             if (att === 'yes') {
                 msg = `<p class="font-elegant text-lg tx-muted mt-2">Son <span class="font-bold text-sky-600">${pax}</span> persona${pax > 1 ? 's' : ''} confirmada${pax > 1 ? 's' : ''}.</p>`;
             } else {
-                msg = `<p class="font-elegant text-lg tx-muted mt-2">Lamentamos que <span class="font-bold text-red-500">${pax}</span> persona${pax > 1 ? 's' : ''} no puedan asistir.</p>`;
+                msg = `<p class="font-elegant text-lg tx-muted mt-2">Lamentamos que no puedas asistir. Gracias por avisarnos.</p>`;
             }
             
             b.innerHTML = `
@@ -639,7 +653,11 @@
 
                     <div class="bg-white rounded-2xl p-4 border border-gray-200 mb-4">
                         <p class="font-display font-bold text-base tx-dark mb-2">Lista Oficial de Invitados</p>
-                        <p class="text-xs tx-muted mb-2">Escribe cada familia o grupo de invitados en una línea. Ej: "Luis Garcia y Esposa (Ginger Zambrano)"</p>
+                        <p class="text-xs tx-muted mb-2">Sube un archivo Excel (.xlsx) o CSV. Los nombres deben estar en la <b>Columna A</b>, uno debajo del otro. O escribe manualmente abajo.</p>
+                        
+                        <input type="file" id="upload-excel" accept=".xlsx, .xls, .csv" class="inp w-full px-3 py-2 text-sm mb-2">
+                        <button onclick="processExcel()" class="btn-g w-full py-2 text-white text-sm rounded-xl mb-3">📥 Cargar Excel a la Lista</button>
+                        
                         <textarea id="oficial-list" rows="4" class="inp w-full px-3 py-2 text-sm mb-2" placeholder="Luis Garcia y Esposa (Ginger Zambrano)&#10;Jonathan Criollo y Esposa (Ingrid Montes)&#10;Carlos Criollo"></textarea>
                         <button onclick="saveOfficialList()" class="btn-g w-full py-2 text-white text-sm rounded-xl">Guardar Lista Oficial</button>
                     </div>
@@ -658,6 +676,41 @@
             `;
             document.getElementById('float-modal').classList.add('on');
             upAll(); 
+        }
+
+        function processExcel() {
+            const fileInput = document.getElementById('upload-excel');
+            if (!fileInput.files.length) {
+                toast('⚠️', 'Selecciona un archivo', 'Primero elige el archivo Excel o CSV.');
+                return;
+            }
+            const file = fileInput.files[0];
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                const data = new Uint8Array(e.target.result);
+                const workbook = XLSX.read(data, { type: 'array' });
+                const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+                const rows = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
+                
+                let names = [];
+                rows.forEach(row => {
+                    if (row.length > 0 && row[0] && row[0].toString().trim() !== '') {
+                        names.push(row[0].toString().trim());
+                    }
+                });
+                
+                if (names.length === 0) {
+                    toast('⚠️', 'Archivo vacío', 'No se encontraron nombres en la Columna A.');
+                    return;
+                }
+                
+                const textarea = document.getElementById('oficial-list');
+                textarea.value = names.join('\n');
+                toast('✅', 'Excel Cargado', 'Revisa los nombres y presiona "Guardar Lista Oficial".');
+            };
+            
+            reader.readAsArrayBuffer(file);
         }
 
         async function saveOfficialList() {
@@ -681,10 +734,14 @@
             if(!d.length){ l.innerHTML = `<p class="text-center tx-muted text-sm py-4">Sin registros</p>`; return; }
             l.innerHTML = d.map((g)=>{
                 const y = g.att === 'yes';
+                let paxInfo = y ? `Asiste (${g.pax||1} pax)` : `No asiste`;
+                if (y && g.adults !== undefined) {
+                    paxInfo = `Asiste (${g.adults} A, ${g.kids||0} N)`;
+                }
                 return `<div class="bg-gray-50 p-2 rounded-lg text-sm flex justify-between items-center">
                     <div>
                         <p class="font-bold tx-dark">${g.name}</p>
-                        <p class="text-xs ${y?'text-green-600':'text-red-500'}">${y ? `Asiste (${g.pax||1} pax)` : `No asiste (${g.pax||1} pax)`}</p>
+                        <p class="text-xs ${y?'text-green-600':'text-red-500'}">${paxInfo}</p>
                     </div>
                     <button onclick="delGuest('${g.name}','${g.time}')" class="text-red-400 hover:text-red-600 text-xs">✕</button>
                 </div>`;
@@ -752,7 +809,10 @@
             doc.setTextColor(50);
             d.forEach((g, i) => {
                 if (y > 270) { doc.addPage(); y = 20; }
-                const status = g.att === 'yes' ? `ASISTIRÁ (${g.pax||1} pax)` : `NO ASISTIRÁ (${g.pax||1} pax)`;
+                let status = g.att === 'yes' ? `ASISTIRÁ (${g.pax||1} pax)` : `NO ASISTIRÁ`;
+                if (g.att === 'yes' && g.adults !== undefined) {
+                    status = `ASISTIRÁ (${g.adults} Adultos, ${g.kids||0} Niños)`;
+                }
                 doc.setTextColor(g.att === 'yes' ? 0 : 200, g.att === 'yes' ? 150 : 0, 0);
                 doc.text(`${i + 1}. ${g.name} (${status})`, 20, y);
                 y += 7;
@@ -770,8 +830,12 @@
             const data = await fetchGuests();
             const d = data.invitados || [];
             if(!d.length){ toast('⚠️','Sin datos',''); return; }
-            let c='Nombre,Asistencia,Personas,Fecha\n';
-            d.forEach(g=>{ c+=`"${g.name}","${g.att==='yes'?'Si':'No'}","${g.pax||1}","${g.time||''}"\n` });
+            let c='Nombre,Asistencia,Adultos,Niños,Total,Fecha\n';
+            d.forEach(g=>{ 
+                const adults = g.adults !== undefined ? g.adults : (g.att === 'yes' ? (g.pax||1) : 0);
+                const kids = g.kids || 0;
+                c+=`"${g.name}","${g.att==='yes'?'Si':'No'}","${adults}","${kids}","${g.pax||1}","${g.time||''}"\n` 
+            });
             const b=new Blob(['\ufeff'+c],{type:'text/csv;charset=utf-8;'});
             const a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download='confirmaciones.csv'; a.click();
             toast('📥','Descargado','');
