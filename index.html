@@ -66,6 +66,7 @@
         .btn-g:hover::before{left:100%}
         .btn-g:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(2,132,199,.3)}
         .btn-g:active{transform:scale(.98)}
+        .btn-g:disabled{opacity:0.6;cursor:not-allowed;transform:scale(1)}
         
         .btn-attend { transition: all 0.3s; border-radius: 16px; font-family: 'Playfair Display', serif; }
         .btn-yes { background: linear-gradient(135deg, #38bdf8, #0284c7); color: white; box-shadow: 0 4px 15px rgba(14,165,233,.3); }
@@ -148,7 +149,7 @@
                 <div class="flex items-center justify-center gap-1.5 mb-3">
                     <span class="text-5xl crown-tilt inline-block glow">👑</span>
                 </div>
-                <h1 class="font-script text-4xl shimmer leading-tight">Gaby te invita a celebrar sus XV años</h1>
+                <h1 class="font-script shimmer leading-tight" style="font-size: clamp(1.75rem, 6vw, 2.5rem);">Gaby te invita a celebrar sus XV años</h1>
             </div>
         </header>
 
@@ -229,13 +230,20 @@
                         </div>
 
                         <div id="pax-selector" class="hidden mt-5 pt-5 border-t border-sky-100">
+                            
+                            <!-- CAMPO DE TEXTO PARA NOMBRE (Si no hay URL personalizada) -->
+                            <div id="name-input-section" class="hidden mb-5 pb-4 border-b border-sky-100">
+                                <p class="text-center font-elegant text-base tx-muted mb-3">Ponga 1 Nombre y 1 Apellido para verificar su invitación:</p>
+                                <input type="text" id="manual-guest-name" class="inp w-full px-4 py-3 text-center mb-3" placeholder="Ej: Carlos Criollo">
+                            </div>
+
                             <p id="pax-text" class="text-center font-elegant text-base tx-muted mb-3">¿Cuántas personas asistirán en total? (Incluyéndote)</p>
                             <div class="flex items-center justify-center gap-4 mb-4">
                                 <button onclick="changePax(-1)" class="w-12 h-12 rounded-full bg-sky-100 text-sky-700 text-2xl font-bold flex items-center justify-center">-</button>
                                 <span id="pax-count" class="font-display text-4xl font-bold tx-dark w-12 text-center">1</span>
                                 <button onclick="changePax(1)" class="w-12 h-12 rounded-full bg-sky-100 text-sky-700 text-2xl font-bold flex items-center justify-center">+</button>
                             </div>
-                            <button onclick="submitRSVP()" class="btn-g w-full py-3 text-white font-display font-bold text-base tracking-wider flex items-center justify-center gap-2">
+                            <button id="submit-rsvp-btn" onclick="submitRSVP()" class="btn-g w-full py-3 text-white font-display font-bold text-base tracking-wider flex items-center justify-center gap-2">
                                 Confirmar <span>👑</span>
                             </button>
                         </div>
@@ -358,6 +366,14 @@
             }
             
             document.getElementById('pax-selector').classList.remove('hidden');
+            
+            // Mostrar campo de texto solo si no hay nombre en la URL
+            if (!currentGuestName) {
+                document.getElementById('name-input-section').classList.remove('hidden');
+            } else {
+                document.getElementById('name-input-section').classList.add('hidden');
+            }
+            
             currentPax = 1;
             document.getElementById('pax-count').textContent = currentPax;
         }
@@ -367,33 +383,33 @@
             document.getElementById('pax-count').textContent = currentPax;
         }
 
-        // Función auxiliar mejorada para encontrar el grupo familiar exacto
+        // Función para normalizar texto (quitar tildes y minúsculas)
+        function normalizeStr(s) {
+            return s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
+        }
+
+        // Función auxiliar para encontrar el grupo familiar exacto
         function findOfficialGroup(name, oficial) {
-            const inputLower = name.toLowerCase().trim();
-            const words = inputLower.split(' ').filter(w => w.length > 2);
+            const inputNorm = normalizeStr(name);
+            const words = inputNorm.split(' ').filter(w => w.length > 2);
 
             if (words.length < 2) return null;
 
             for (const group of oficial) {
-                const groupLower = group.toLowerCase();
+                const groupNorm = normalizeStr(group);
                 
-                // 1. Coincidencia exacta del nombre completo escrito
-                if (groupLower.includes(inputLower)) {
+                if (groupNorm.includes(inputNorm)) {
                     return group;
                 }
                 
-                // 2. Tomar las dos primeras palabras (Nombre + Apellido) y buscarlas juntas
-                // Ej: "Carlos Criollo" se busca exactamente así en la lista.
                 const firstTwoWords = words.slice(0, 2).join(' ');
-                if (groupLower.includes(firstTwoWords)) {
+                if (groupNorm.includes(firstTwoWords)) {
                     return group;
                 }
                 
-                // 3. Tomar la primera y la última palabra (por si tiene segundo nombre)
-                // Ej: "Juan Carlos Criollo" -> buscar "Juan Criollo" o "Carlos Criollo"
                 if (words.length >= 3) {
                     const firstLastWords = `${words[0]} ${words[words.length - 1]}`;
-                    if (groupLower.includes(firstLastWords)) {
+                    if (groupNorm.includes(firstLastWords)) {
                         return group;
                     }
                 }
@@ -402,30 +418,45 @@
         }
 
         async function submitRSVP() {
+            // Deshabilitar botón inmediatamente para evitar doble clic
+            const submitBtn = document.getElementById('submit-rsvp-btn');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = 'Enviando... <span>⏳</span>';
+
+            // Si no hay nombre en la URL, tomarlo del campo de texto
             if (!currentGuestName) {
-                const name = prompt("Ponga 1 Nombre y 1 Apellido para ver si está invitado y confirme su asistencia:");
-                if (!name) return;
-                currentGuestName = name.trim();
+                const nameInput = document.getElementById('manual-guest-name').value.trim();
+                if (!nameInput) {
+                    toast('⚠️', 'Falta nombre', 'Por favor escribe tu nombre para continuar.');
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = 'Confirmar <span>👑</span>';
+                    return;
+                }
+                currentGuestName = nameInput;
             }
 
             const data = await fetchGuests();
             const d = data.invitados || [];
             const oficial = data.oficial || [];
 
-            const inputLower = currentGuestName.toLowerCase();
-            const words = inputLower.split(' ').filter(w => w.length > 2);
+            const inputNorm = normalizeStr(currentGuestName);
+            const words = inputNorm.split(' ').filter(w => w.length > 2);
 
             if (words.length < 2) {
                 showValidationError("Faltan datos", "Por favor escribe tu Nombre y un Apellido para poder buscarte en la lista.");
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = 'Confirmar <span>👑</span>';
                 return;
             }
 
-            // 1. Buscar a qué grupo oficial pertenece la persona que se está registrando
+            // 1. Buscar a qué grupo oficial pertenece
             let officialGroupName = "";
             if (oficial.length > 0) {
                 const groupFound = findOfficialGroup(currentGuestName, oficial);
                 if (!groupFound) {
                     showValidationError("Lo sentimos, no te encontramos en la lista oficial de invitados", "Por favor, verifica que hayas escrito tu nombre y apellido correctamente. Si crees que es un error, comunícate con los organizadores.");
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = 'Confirmar <span>👑</span>';
                     return;
                 }
                 officialGroupName = groupFound;
@@ -436,24 +467,23 @@
             if (officialGroupName) {
                 for (const g of d) {
                     const groupOfRegistered = findOfficialGroup(g.name, oficial);
-                    // Si el grupo familiar del que ya registró es el mismo que el del que intenta registrar ahora
                     if (groupOfRegistered && groupOfRegistered === officialGroupName) {
                         alreadyConfirmed = g;
                         break;
                     }
                 }
             } else {
-                // Si no hay lista oficial, solo verificamos por nombre exacto
-                alreadyConfirmed = d.find(g => g.name.toLowerCase() === inputLower);
+                alreadyConfirmed = d.find(g => normalizeStr(g.name) === inputNorm);
             }
 
-            // Si ya confirmó alguien de su grupo, mostramos el mensaje y detenemos el registro para no duplicar
             if (alreadyConfirmed) {
                 showAlreadyConfirmedModal(alreadyConfirmed, officialGroupName);
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = 'Confirmar <span>👑</span>';
                 return;
             }
 
-            // 3. Si pasa todas las validaciones, se procede a registrar
+            // 3. Registrar
             const pax = currentPax;
             const en = {
                 name: currentGuestName,
@@ -471,6 +501,10 @@
             document.getElementById('pax-selector').classList.add('hidden');
             
             showThankYouModal(currentGuestName, currentAtt, pax, officialGroupName);
+            
+            // Restaurar botón por si vuelve a usar la sección
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = 'Confirmar <span>👑</span>';
         }
 
         function showValidationError(title, msg) {
