@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>XV Años - Gaby Criollo García 👑</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Librerías para Excel y PDF -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,500&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
@@ -60,6 +59,52 @@
         @keyframes confetti-fall{0%{transform:translateY(-10vh) rotate(0deg);opacity:.7}100%{transform:translateY(110vh) rotate(720deg);opacity:0}}.confetti{position:fixed;pointer-events:none;z-index:2}
         @keyframes soft-glow{0%,100%{box-shadow:0 0 15px rgba(2,132,199,.08)}50%{box-shadow:0 0 30px rgba(2,132,199,.15)}}.soft-glow{animation:soft-glow 4s ease-in-out infinite}
 
+        /* Skeleton Loader */
+        @keyframes skeleton-pulse {
+            0% { background-color: #e2e8f0; }
+            50% { background-color: #f1f5f9; }
+            100% { background-color: #e2e8f0; }
+        }
+        .skeleton {
+            display: inline-block;
+            width: 40px;
+            height: 30px;
+            border-radius: 6px;
+            animation: skeleton-pulse 1.5s infinite ease-in-out;
+            color: transparent;
+        }
+
+        /* Scroll Reveal */
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Floating Buttons */
+        .float-btn {
+            position: fixed;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 100;
+            cursor: pointer;
+            font-size: 24px;
+            color: white;
+            transition: transform 0.3s;
+        }
+        .float-btn:hover { transform: scale(1.1); }
+        .music-btn { top: 20px; right: 20px; background: linear-gradient(135deg, #0ea5e9, #0284c7); }
+        .wa-btn { bottom: 20px; right: 20px; background: #25D366; }
+
         .inp{background:white;border:1.5px solid rgba(14,165,233,.2);color:#111;transition:all .3s;font-family:'Cormorant Garamond',serif;border-radius:14px;font-size:16px}
         .inp:focus{outline:none;border-color:#0ea5e9;box-shadow:0 0 0 3px rgba(14,165,233,.1)}
         .inp::placeholder{color:rgba(0,0,0,.3)}
@@ -103,6 +148,15 @@
 </head>
 <body>
     <div id="petals"></div>
+
+    <!-- Música de Fondo (Puedes cambiar el src por tu MP3) -->
+    <audio id="bg-music" loop>
+        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3" type="audio/mpeg">
+    </audio>
+    <div class="float-btn music-btn" onclick="toggleMusic()" id="music-btn">🎵</div>
+
+    <!-- Botón Flotante WhatsApp (Cambia el número 593999999999 por el tuyo) -->
+    <a href="https://wa.me/593999999999?text=Hola%20Gaby,%20confirmo%20mi%20asistencia%20a%20tus%20XV%20Años" target="_blank" class="float-btn wa-btn">💬</a>
 
     <!-- SOBRE -->
     <div id="env-screen" class="bg-main">
@@ -162,7 +216,7 @@
                 <div id="p-home" class="tp fade-up">
                     
                     <!-- SALUDO PERSONALIZADO ARRIBA -->
-                    <div id="guest-greeting-box" class="invite-box p-5 mb-5 text-center hidden">
+                    <div id="guest-greeting-box" class="invite-box p-5 mb-5 text-center hidden reveal">
                         <div class="flex items-center justify-center gap-3 mb-2">
                             <div class="h-px w-10 bg-gradient-to-r from-transparent to-sky-400/60"></div>
                             <span class="text-sky-500 text-sm twinkle">✦</span>
@@ -177,8 +231,8 @@
                         </div>
                     </div>
 
-                    <!-- DETALLES DEL EVENTO -->
-                    <div class="invite-box p-6 mb-5 soft-glow text-center">
+                    <!-- DETALLES DEL EVENTO CON CUENTA REGRESIVA -->
+                    <div class="invite-box p-6 mb-5 soft-glow text-center reveal">
                         <p class="font-elegant text-lg tx-muted mb-2">Te esperamos el</p>
                         <p class="font-display text-3xl font-bold tx-dark mb-3">Sábado 17 de Octubre</p>
                         
@@ -190,6 +244,26 @@
 
                         <p class="font-elegant text-lg tx-muted mb-1">A las</p>
                         <p class="font-display text-2xl font-bold tx-dark mb-4">8:00 PM</p>
+
+                        <!-- CUENTA REGRESIVA -->
+                        <div id="countdown" class="grid grid-cols-4 gap-2 mt-4 mb-4">
+                            <div class="bg-sky-100 p-2 rounded-xl">
+                                <span id="cd-days" class="font-display text-3xl font-bold text-sky-800 block">0</span>
+                                <span class="text-xs tx-muted uppercase tracking-wider">Días</span>
+                            </div>
+                            <div class="bg-sky-100 p-2 rounded-xl">
+                                <span id="cd-hours" class="font-display text-3xl font-bold text-sky-800 block">0</span>
+                                <span class="text-xs tx-muted uppercase tracking-wider">Hrs</span>
+                            </div>
+                            <div class="bg-sky-100 p-2 rounded-xl">
+                                <span id="cd-mins" class="font-display text-3xl font-bold text-sky-800 block">0</span>
+                                <span class="text-xs tx-muted uppercase tracking-wider">Min</span>
+                            </div>
+                            <div class="bg-sky-100 p-2 rounded-xl">
+                                <span id="cd-secs" class="font-display text-3xl font-bold text-sky-800 block">0</span>
+                                <span class="text-xs tx-muted uppercase tracking-wider">Seg</span>
+                            </div>
+                        </div>
 
                         <div class="flex items-center justify-center gap-3 my-4">
                             <div class="h-px w-12 bg-gradient-to-r from-transparent to-sky-400/60"></div>
@@ -205,7 +279,7 @@
                     </div>
 
                     <!-- OBSEQUIO -->
-                    <div class="invite-box p-4 mb-5 flex items-center justify-center gap-4">
+                    <div class="invite-box p-4 mb-5 flex items-center justify-center gap-4 reveal">
                         <span class="text-3xl">🎁</span>
                         <div class="text-center">
                             <p class="font-display font-bold text-base tx-dark">Obsequio: Sobre Cerrado</p>
@@ -214,7 +288,7 @@
                     </div>
 
                     <!-- CONFIRMACIÓN DE ASISTENCIA -->
-                    <div class="invite-box p-6 mb-5">
+                    <div class="invite-box p-6 mb-5 reveal">
                         <div class="text-center mb-4">
                             <p class="font-elegant text-lg tx-muted mb-1">Por favor confirma tu asistencia</p>
                             <p class="font-display text-sm tx-muted">Selecciona una opción</p>
@@ -239,7 +313,7 @@
                                 <input type="text" id="manual-guest-name" class="inp w-full px-4 py-3 text-center mb-3" placeholder="Ej: Carlos Criollo">
                             </div>
 
-                            <!-- SELECTOR DE ADULTOS Y NIÑOS (SOLO SI ASISTE) -->
+                            <!-- SELECTOR DE ADULTOS Y NIÑOS -->
                             <div id="attend-details" class="hidden mb-5">
                                 <div class="grid grid-cols-2 gap-4 text-center">
                                     <div>
@@ -269,18 +343,18 @@
                         </div>
                     </div>
 
-                    <!-- CONTADORES DESTACADOS -->
-                    <div class="invite-box p-6 mb-8 text-center bg-sky-50 border-sky-200">
+                    <!-- CONTADORES DESTACADOS CON SKELETON LOADER -->
+                    <div class="invite-box p-6 mb-8 text-center bg-sky-50 border-sky-200 reveal">
                         <p class="font-elegant text-lg tx-muted mb-2">Hasta ahora, han confirmado:</p>
                         <p class="font-display font-bold tx-dark mb-4" style="font-size: 3.5rem; line-height: 1.2;">
-                            <span id="c-yes" class="text-sky-600">0</span> <span class="text-sky-800">personas</span> 💙
+                            <span id="c-yes" class="text-sky-600 skeleton">0</span> <span class="text-sky-800">personas</span> 💙
                         </p>
                         
                         <div class="h-px w-24 bg-sky-200 mx-auto my-3"></div>
                         
                         <p class="font-elegant text-base tx-muted mb-1">No podrán asistir:</p>
                         <p class="font-display font-bold text-red-600" style="font-size: 2.5rem; line-height: 1.2;">
-                            <span id="c-no">0</span> <span class="text-red-700">personas</span> 💔
+                            <span id="c-no" class="text-red-700 skeleton">0</span> <span class="text-red-700">personas</span> 💔
                         </p>
                     </div>
 
@@ -309,11 +383,13 @@
     <div id="toast" class="toast-c"><div class="bg-white border border-black/10 rounded-2xl px-5 py-3 shadow-xl flex items-center gap-3"><span id="t-ico" class="text-xl">✅</span><div><p id="t-tit" class="font-display font-bold tx-dark text-sm"></p><p id="t-msg" class="tx-muted text-sm font-elegant"></p></div></div></div>
 
     <script>
+        // ===== TUS DATOS DE JSONBIN CONFIGURADOS =====
         const BIN_URL = "https://api.jsonbin.io/v3/b/6a91d516f5f4af5e294ef1c2"; 
         const API_KEY = "$2a$10$BAhARkBhTbB6InHiDUxsIOgRZhSFTDZzDELpV8NZKt0tBqliPX/FK";
         const PHOTO_URL = "https://1drv.ms/i/c/6cc2f784eb96b5ce/IQBVp7bbpM80TYC8XJBZvo0TAVCrRlsSbSIH5Ux6lWMPdpU?e=F09Yce";
+        // =============================================
 
-        const AU='admin', AP='admin'; 
+        const AU='admin', AP='Gaby2024!'; // CONTRASEÑA DE ADMIN MEJORADA
         let auth=false, pending=null;
         let currentAtt = null;
         let currentPax = { adults: 1, kids: 0 };
@@ -368,8 +444,13 @@
             y.forEach(g => { totalYes += (g.pax || 1); });
             n.forEach(g => { totalNo += (g.pax || 1); });
             
-            document.getElementById('c-yes').textContent = totalYes;
-            document.getElementById('c-no').textContent = totalNo;
+            // Quitar skeleton y poner números reales
+            const cYes = document.getElementById('c-yes');
+            const cNo = document.getElementById('c-no');
+            cYes.classList.remove('skeleton');
+            cNo.classList.remove('skeleton');
+            cYes.textContent = totalYes;
+            cNo.textContent = totalNo;
             
             if (auth) renderAdminGuests(d, oficial); 
         }
@@ -386,7 +467,6 @@
                 document.getElementById('name-input-section').classList.add('hidden');
             }
             
-            // Mostrar selectores solo si van a asistir
             if (status === 'yes') {
                 document.getElementById('attend-details').classList.remove('hidden');
                 currentPax = { adults: 1, kids: 0 };
@@ -420,11 +500,16 @@
 
             for (const group of oficial) {
                 const groupNorm = normalizeStr(group);
+                
                 if (groupNorm.includes(inputNorm)) return group;
                 
+                // Combinaciones de palabras para segundos nombres
                 const firstTwoWords = words.slice(0, 2).join(' ');
                 if (groupNorm.includes(firstTwoWords)) return group;
                 
+                const lastTwoWords = words.slice(-2).join(' ');
+                if (groupNorm.includes(lastTwoWords)) return group;
+
                 if (words.length >= 3) {
                     const firstLastWords = `${words[0]} ${words[words.length - 1]}`;
                     if (groupNorm.includes(firstLastWords)) return group;
@@ -495,7 +580,6 @@
                 return;
             }
 
-            // Calcular total de pax
             const totalPax = currentAtt === 'yes' ? (currentPax.adults + currentPax.kids) : 1;
             
             const en = {
@@ -513,6 +597,7 @@
             await saveGuests(data);
             upAll();
             
+            // Ocultar formulario para evitar doble envío, dejar solo el contador
             document.getElementById('pax-selector').classList.add('hidden');
             
             showThankYouModal(currentGuestName, currentAtt, totalPax, officialGroupName);
@@ -851,6 +936,59 @@
             }
         }
 
+        // ===== MÚSICA Y CUENTA REGRESIVA =====
+        function toggleMusic() {
+            const audio = document.getElementById('bg-music');
+            const btn = document.getElementById('music-btn');
+            if (audio.paused) {
+                audio.play();
+                btn.innerHTML = '🔊';
+            } else {
+                audio.pause();
+                btn.innerHTML = '🎵';
+            }
+        }
+
+        function startCountdown() {
+            const eventDate = new Date("October 17, 2024 20:00:00").getTime();
+            const x = setInterval(function() {
+                const now = new Date().getTime();
+                const distance = eventDate - now;
+                
+                if (distance < 0) {
+                    clearInterval(x);
+                    document.getElementById("cd-days").innerText = "0";
+                    document.getElementById("cd-hours").innerText = "0";
+                    document.getElementById("cd-mins").innerText = "0";
+                    document.getElementById("cd-secs").innerText = "0";
+                    return;
+                }
+
+                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                document.getElementById("cd-days").innerText = days;
+                document.getElementById("cd-hours").innerText = hours;
+                document.getElementById("cd-mins").innerText = minutes;
+                document.getElementById("cd-secs").innerText = seconds;
+            }, 1000);
+        }
+
+        // ===== SCROLL REVEAL =====
+        function initScrollReveal() {
+            const reveals = document.querySelectorAll('.reveal');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, { threshold: 0.1 });
+            reveals.forEach(r => observer.observe(r));
+        }
+
         function openFloatModal(t){const b=document.getElementById('float-modal-body'),m=document.getElementById('float-modal');
             if(t==='location'){b.innerHTML=`<div class="text-center"><div class="flex items-center justify-center gap-2 mb-4"><div class="h-px w-12 bg-gradient-to-r from-transparent to-sky-400/60"></div><span class="text-sky-500 text-base twinkle">✦</span><div class="h-px w-12 bg-gradient-to-l from-transparent to-sky-400/60"></div></div><span class="text-5xl block mb-3">📍</span><p class="font-display text-xl tx-dark font-bold mb-1">Terminal Terrestre</p><p class="font-elegant text-base tx-muted mb-4">Lugar del evento</p><a href="https://maps.app.goo.gl/DPAvr3Pw6BaHSzAQ8" target="_blank" class="btn-g inline-flex items-center gap-2 px-6 py-3 text-white font-display font-semibold text-base"><span>Abrir en Google Maps</span><span>🗺️</span></a><p class="text-sm tx-muted font-elegant mt-3">Sábado 17 de Octubre, 8:00 PM</p></div>`;m.classList.add('on')}
         }
@@ -860,7 +998,7 @@
         let tt=null;function toast(i,t,m){const e=document.getElementById('toast');document.getElementById('t-ico').textContent=i;document.getElementById('t-tit').textContent=t;document.getElementById('t-msg').textContent=m;e.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>e.classList.remove('show'),3000)}
 
         function makePetals(){const c=document.getElementById('petals'),cl=['#7dd3fc','#bae6fd','#e0f2fe','#38bdf8'];for(let i=0;i<12;i++){const p=document.createElement('div');p.className='petal';const s=6+Math.random()*10;p.style.cssText=`width:${s}px;height:${s}px;left:${Math.random()*100}%;background:${cl[i%cl.length]};animation:petal-fall ${8+Math.random()*8}s linear infinite;animation-delay:${Math.random()*10}s;opacity:${.2+Math.random()*.3}`;c.appendChild(p)}}
-        function openEnv(){document.getElementById('env-seal').classList.add('go');setTimeout(()=>document.getElementById('env-flap').classList.add('go'),300);setTimeout(()=>{document.getElementById('env-scene').classList.add('bye');setTimeout(()=>{document.getElementById('env-screen').style.display='none';document.getElementById('main-screen').classList.add('show');applyPhotoBg();burstConfetti()},400)},700)}
+        function openEnv(){document.getElementById('env-seal').classList.add('go');setTimeout(()=>document.getElementById('env-flap').classList.add('go'),300);setTimeout(()=>{document.getElementById('env-scene').classList.add('bye');setTimeout(()=>{document.getElementById('env-screen').style.display='none';document.getElementById('main-screen').classList.add('show');applyPhotoBg();burstConfetti();startCountdown();initScrollReveal();},400)},700)}
         function burstConfetti(){const cl=['#0ea5e9','#38bdf8','#7dd3fc','#bae6fd','#0284c7'];for(let i=0;i<40;i++){const c=document.createElement('div');c.className='confetti';const s=4+Math.random()*6;c.style.cssText=`width:${s}px;height:${s*1.4}px;left:${Math.random()*100}%;background:${cl[i%cl.length]};border-radius:${Math.random()>.5?'50%':'2px'};animation:confetti-fall ${2+Math.random()*3}s linear forwards;animation-delay:${Math.random()*.8}s`;document.body.appendChild(c);setTimeout(()=>c.remove(),5000)}}
 
         document.addEventListener('DOMContentLoaded',function(){
